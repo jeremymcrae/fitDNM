@@ -28,7 +28,7 @@ exclude_and_get_vector <- function(data, exclude) {
 compute_pvalue <- function(de_novos, n_male, n_female, symbol, severity, mu_rate) {
     
     # select the mutations for the given gene
-    de_novos = de_novos[de_novos[, 5] == symbol, ]
+    de_novos = de_novos[de_novos$gene == symbol, ]
     
     # count the samples in the cohort, so we can calculate expected mutations
     nsample = n_male + n_female
