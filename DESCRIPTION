@@ -1,0 +1,16 @@
+Package: fitDNM
+Title: Enrichment of de novo mutations within genes
+Version: 0.1.0
+Authors@R: person(given="Yu", family="Jiang", email="example@example.com",
+    role=c("aut", "cre"))
+Description: Tests for enrichment of de novo mutations within genes.
+Depends:
+    R (>= 3.0.0)
+License: file LICENSE
+LazyData: true
+Imports:
+    stats,
+    utils,
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
