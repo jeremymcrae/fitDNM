@@ -38,18 +38,18 @@ compute_pvalue <- function(de_novos, n_male, n_female, symbol, severity, mu_rate
     
     bases = c('A', 'C', 'G', 'T')
     
-    in_gene = severity$gene == symbol
-    if (any(in_gene) == FALSE) { return(NULL) }
-    
-    nsnv_o = sum(severity[in_gene, bases])
-    positions = severity$pos[in_gene]
-    ref_allele = severity$ref[in_gene]
-    severity = severity[in_gene, bases]
+    severity = severity[severity$gene == symbol, ]
+    positions = severity$pos
+    ref_allele = severity$ref
+    severity = severity[, bases]
+    nsnv_o = sum(severity)
     mu_rate = mu_rate[mu_rate$gene == symbol, bases]
     
     # recode for LOF mutations
     severity[severity == 2] = 1
     severity[severity == 3] = 0
+    
+    if (nrow(severity) == 0) { return(NULL) }
     
     # downweight the severities by the rate across the alleles at each site
     severity = severity - apply((severity * mu_rate), 1, sum)
