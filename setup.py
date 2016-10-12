@@ -28,7 +28,7 @@ setup(
     author_email = "jeremy.mcrae@sanger.ac.uk",
     description = ("Enrichment of de novo mutations within genes."),
     license = "MIT",
-    packages=["mupit"],
+    packages=["fitDNM"],
     install_requires=['pandas >= 0.13.1',
                       'scipy >= 0.9.0',
                       'numpy >= 1.6.1',

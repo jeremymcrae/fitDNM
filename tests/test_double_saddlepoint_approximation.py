@@ -1,44 +1,49 @@
 # unit testing for the fitDNM functions
 
-library(fitDNM)
-library(testthat)
+import unittest
+import random
 
-context("double saddle point approximation checks")
+from numpy import array
+from numpy.random import beta, uniform, normal, seed
 
-test_that("double_saddle_point_approximation output is correct", {
-    
-    set.seed(1)
-    
-    y = 1
-    lambdas = rnorm(1000, mean=1e-4, sd=1e-5)
-    weights = rbeta(1000, shape1=0.5, shape2=0.5)
-    expect_equal(double_saddle_point_approximation(y, lambdas, weights), 0.002536151431)
-})
+from fitDNM.double_saddle_point import double_saddle_point_approximation
 
-test_that("double_saddle_point_approximation output is correct when the start
-    value equals 0", {
+class TestDoubleSaddlePointPy(unittest.TestCase):
+    ''' double saddle point approximation checks
+    '''
     
-    set.seed(1)
+    def setUp(self):
+        seed(1)
+        random.seed(1)
     
-    # and check that if we have e
-    y = 0
-    lambdas = rnorm(1000, mean=1e-4, sd=1e-5)
-    weights = rbeta(1000, shape1=0.5, shape2=0.5)
-    expect_equal(double_saddle_point_approximation(y, lambdas, weights), 1)
+    def test_double_saddle_point_approximation(self):
+        '''double_saddle_point_approximation output is correct
+        '''
+        
+        y = 1
+        lambdas = normal(size=1000, loc=1e-4, scale=1e-5)
+        weights = beta(size=1000, a=0.5, b=0.5)
+        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 0.002536151431)
     
-    y = 1
-    weights = rep(0, 1000)
-    expect_equal(double_saddle_point_approximation(y, lambdas, weights), NA)
-})
-
-
-
-test_that("double_saddle_point_approximation output is correct", {
+    def test_double_saddle_point_approximation_zero_values(self):
+        '''double_saddle_point_approximation output is correct when the start value equals 0
+        '''
+        
+        # and check that if we have e
+        y = 0
+        lambdas = normal(size=1000, loc=1e-4, scale=1e-5)
+        weights = beta(size=1000, a=0.5, b=0.5)
+        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 1)
+        
+        y = 1
+        weights = array([0] * 1000)
+        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), None)
     
-    set.seed(1)
-    
-    y = 1
-    lambdas = rnorm(1000, mean=1e-5, sd=1e-5)
-    weights = runif(1000)
-    expect_equal(double_saddle_point_approximation(y, lambdas, weights), 2.477654823e-05)
-})
+    def test_double_saddle_point_approximation_uniform(self):
+        '''double_saddle_point_approximation output is correct
+        '''
+        
+        y = 1
+        lambdas = normal(size=1000, loc=1e-5, scale=1e-5)
+        weights = uniform(size=1000)
+        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 2.477654823e-05)

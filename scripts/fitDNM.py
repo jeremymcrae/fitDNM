@@ -1,51 +1,49 @@
 
-library(argparse)
-library(fitDNM)
+import argparse
 
-get_options <- function() {
+import pandas
+
+from fitDNM.prepare_data import get_rows_to_exclude, tidy_table
+from fitDNM.gene_enrichment import compute_pvalue
+
+def get_options():
     parser = ArgumentParser()
-    parser$add_argument('--males', type='integer', help='number of males.')
-    parser$add_argument('--females', type='integer', help='number of females.')
-    parser$add_argument('--de-novos', help='Path to table of de novos.')
-    parser$add_argument('--rates', help='Path to table of per-base and allele mutation rates.')
-    parser$add_argument('--severity', help='Path to table of per base and allele severity scores.')
-    parser$add_argument('--output', help='Path to put output files into.')
-
-    args = parser$parse_args()
+    parser.add_argument('--males', type=int, help='number of males.')
+    parser.add_argument('--females', type=int, help='number of females.')
+    parser.add_argument('--de-novos', help='Path to table of de novos.')
+    parser.add_argument('--rates', help='Path to table of per-base and allele mutation rates.')
+    parser.add_argument('--severity', help='Path to table of per base and allele severity scores.')
+    parser.add_argument('--output', help='Path to put output files into.')
     
-    return(args)
-}
+    return parser.parse_args()
 
-main <- function() {
+def main():
     args = get_options()
     
-    # args$males = 156
-    # args$females = 108
-    # args$de_novos = '../data-raw/de_novos.txt'
-    # args$rates = '../data-raw/rates.txt.gz'
-    # args$severity = '../data-raw/severity.txt.gz'
-    # args$output = '../output.txt'
+    # args.males = 156
+    # args.females = 108
+    # args.de_novos = '../data-raw/de_novos.txt'
+    # args.rates = '../data-raw/rates.txt.gz'
+    # args.severity = '../data-raw/severity.txt.gz'
+    # args.output = '../output.txt'
     
-    de_novos = read.table(args$de_novos, header=TRUE, stringsAsFactors=FALSE)
-    mu_rate = read.table(args$rates, header=TRUE, stringsAsFactors=FALSE)
-    severity = read.table(args$severity, header=TRUE, stringsAsFactors=FALSE, fill=TRUE)
+    de_novos = pandas.read_table(args.de_novos)
+    mu_rate = pandas.read_table(args.rates)
+    severity = pandas.read_table(args.severity)
     
     exclude = get_rows_to_exclude(severity)
     
     mu_rate = tidy_table(mu_rate, exclude)
     severity = tidy_table(severity, exclude)
     
-    computed = list()
-    for (symbol in sort(unique(de_novos[['gene']]))) {
-        values = compute_pvalue(de_novos, args$males, args$females, symbol,
+    computed = []
+    for symbol in sorted(set(de_novos['gene'])):
+        values = compute_pvalue(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
-        computed[[symbol]] = values
-    }
     
     # convert the output to a table and save to disk
-    computed = do.call(rbind, computed)
-    write.table(computed, file=args$output, sep='\t', quote=FALSE,
-        row.names=FALSE)
-}
+    computed = pandas.DataFrame(computed)
+    computed.to_csv(args.output, sep='\t', index=False)
 
-main()
+if __name__ == '__main__':
+    main()

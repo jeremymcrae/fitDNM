@@ -1,40 +1,44 @@
 
-#' estimate gene-wise de novo enrichment by saddlepoint approximation
-#'
-#' @param y this is the summed score for the observed de novos
-#' @param lambdas vector of per base and allele mutation rates within a gene
-#' @param weights vector of per base and allele weights, indicating the likely
-#'        severity of each change.
-#'
-#' @export
-#'
-#' @return p-value for gene
-double_saddle_point_approximation <- function(y, lambdas, weights) {
+from math import ceil
+
+from scipy.stats import poisson
+
+from fitDNM.conditional_approximation import conditional_approximation
+
+def double_saddle_point_approximation(y, lambdas, weights):
+    ''' estimate gene-wise de novo enrichment by saddlepoint approximation
+    
+    Args:
+        y: this is the summed score for the observed de novos
+        lambdas: vector of per base and allele mutation rates within a gene
+        weights: vector of per base and allele weights, indicating the likely
+            severity of each change.
+    
+    Returns:
+        p-value for gene
+    '''
     
     current = 0
     updated = 0
     total_mu = sum(lambdas)
     
-    max_weights = max(weights, na.rm=TRUE)
-    start = ceiling(y / max_weights)
+    try:
+        start = ceil(y / max(weights))
+    except OverflowError:
+        return None
     
-    if (start <= 0) {
-        return(1)
-    } else if (start == Inf) {
-        return(NA)
-    }
+    if start <= 0:
+        return 1
     
     # increment the expected score until the delta to the previous iteration is
     # less than one part in 10,000.
-    for (i in c(start:100)) {
-        updated = conditional_approximation(i, y, lambdas, weights) * dpois(i, total_mu)
+    for i in range(start, 101):
+        updated = conditional_approximation(i, y, lambdas, weights) * poisson.pmf(i, total_mu)
         
-        if (is.na(updated)) { return(NA) }
+        if updated is None:
+            return None
         
-        if (abs(updated / current) < 1e-5) {
-            return(current + updated)
-        }
+        if abs(updated / current) < 1e-5:
+            return current + updated
         
-        current = current + updated
-    }
-}
+        current += updated

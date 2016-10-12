@@ -1,30 +1,39 @@
 # unit testing for the fitDNM functions
 
-library(fitDNM)
-library(testthat)
+import unittest
+import random
 
-context("conditional approximation checks")
+from numpy.random import beta, uniform, normal, seed
 
-test_that("conditional_approximation output is correct", {
+from fitDNM.conditional_approximation import conditional_approximation
+
+class TestConditionalApproximationPy(unittest.TestCase):
+    ''' unit test the conditional approximation function
+    '''
     
-    set.seed(1)
+    def setUp(self):
+        ''' construct some objects for unit tests
+        '''
+        
+        seed(1)
+        random.seed(1)
     
-    x = 1
-    y = 1
-    lambdas = rnorm(1000, mean=1e-4, sd=1e-5)
-    weights = rbeta(1000, shape1=0.5, shape2=0.5)
-    expect_equal(conditional_approximation(x, y, lambdas, weights), 0.01528782696)
-})
-
-
-
-test_that("conditional_approximation output is correct for low w_part values", {
+    def test_conditional_approximation(self):
+        ''' check conditional_approximation is correct
+        '''
+        
+        x = 1
+        y = 1
+        lambdas = normal(loc=1e-4, scale=1e-5, size=1000)
+        weights = beta(a=0.5, b=0.5, size=1000)
+        self.assertEqual(conditional_approximation(x, y, lambdas, weights), 0.01528782696)
     
-    set.seed(1)
-    
-    x = 2
-    y = 1
-    lambdas = rnorm(1000, mean=1e-5, sd=1e-5)
-    weights = runif(1000)
-    expect_equal(conditional_approximation(x, y, lambdas, weights), 0.5095790724)
-})
+    def test_conditional_approximation_low_w_part(self):
+        ''' check conditional_approximation for low w_part values
+        '''
+        
+        x = 2
+        y = 1
+        lambdas = normal(loc=1e-5, scale=1e-5, size=1000)
+        weights = uniform(size=1000)
+        self.assertEqual(conditional_approximation(x, y, lambdas, weights), 0.01528782696)
