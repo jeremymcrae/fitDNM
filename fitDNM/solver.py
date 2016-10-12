@@ -1,6 +1,8 @@
 
 from __future__ import division
 
+from math import isnan
+
 from numpy import sign, exp, log
 
 def cgf_ratio(lambdas, weights, mu):
@@ -38,7 +40,7 @@ def solver(current, initial_sign, ratio, lambdas, weights, delta):
         updated = current + initial_sign * delta
         value = ratio - cgf_ratio(lambdas, weights, updated)
         
-        if sign(value) is None:
+        if isnan(sign(value)):
             # TODO: check that this clause is correct. Perhaps it should check
             # TODO: if value is None, or sign(value) == -1L?
             break
