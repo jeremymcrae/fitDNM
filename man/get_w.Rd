@@ -11,9 +11,9 @@ get_w(s, s0, x, y, mu, lambdas, weights)
 
 \item{s0}{something}
 
-\item{x}{something}
+\item{x}{tested summed score}
 
-\item{y}{something}
+\item{y}{observed summed score}
 
 \item{mu}{mutation rate}
 

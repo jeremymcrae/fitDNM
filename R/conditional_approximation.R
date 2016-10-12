@@ -3,8 +3,8 @@
 #'
 #' @param s something
 #' @param s0 something
-#' @param x something
-#' @param y something
+#' @param x tested summed score
+#' @param y observed summed score
 #' @param mu mutation rate
 #' @param lambdas vector of per base and allele mutation rates
 #' @param weights per base and allele weights, indicating the likely severity of
@@ -18,10 +18,10 @@ get_w <- function(s, s0, x, y, mu, lambdas, weights) {
         s0 * x + cgf_0(mu=0, s=s0 , lambdas=lambdas, weights=weights)))
 }
 
-#' refine w part until abs(w_part) is > 1e-4
+#' adjust w_part until it is shifted away from zero
 #'
-#' @param x something
-#' @param y something
+#' @param x tested summed score
+#' @param y observed summed score
 #' @param lambdas vector of per base and allele mutation rates
 #' @param weights per base and allele weights, indicating the likely severity of
 #'        each change
@@ -29,7 +29,7 @@ get_w <- function(s, s0, x, y, mu, lambdas, weights) {
 #' @param increment value to increment y value per iteration
 #'
 #' @return list of s, mu and w_part values
-refine_w <- function(x, y, lambdas, weights, s0, increment=0.01) {
+avoid_zero_w_part <- function(x, y, lambdas, weights, s0, increment=0.01) {
     while (TRUE) {
         y = y + increment
         values = solve_s_u(x, y, lambdas, weights)
@@ -55,17 +55,17 @@ saddlepoint_p <- function(values, s0, lambdas, weights) {
     w = values$mu / abs(values$mu) * sqrt(values$w_part)
     
     # compute K_ss(s0, 0) and |K_2_(s, mu)|
-    K_ss_s0 = exp(s0) * sum(lambdas)
-    K_2_smu = cgf_2(mu=values$mu, s=values$s, lambdas, weights)
+    K_ss = exp(s0) * sum(lambdas)
+    K_2 = cgf_2(mu=values$mu, s=values$s, lambdas, weights)
     
-    p_value = 1 - pnorm(w) + dnorm(w) * (sqrt(K_ss_s0 / (K_2_smu)) / values$mu - 1 / w)
+    p_value = 1 - pnorm(w) + dnorm(w) * (sqrt(K_ss / (K_2)) / values$mu - 1 / w)
     
     return(p_value)
 }
 
 #' conditional approximation
 #'
-#' @param x estimated summed score
+#' @param x tested summed score
 #' @param y observed summed score
 #' @param lambdas vector of per base and allele mutation rates
 #' @param weights per base and allele weights, indicating the likely severity of
@@ -92,10 +92,13 @@ conditional_approximation <- function(x, y, lambdas, weights) {
     if (iter >= 100) { return(NA) }
     
     if (abs(values$w_part) <= 1e-4) {
-        lower = refine_w(x, y, lambdas, weights, s0, 0.01)
+        # If w_part is close enough to zero, this can throw off the estimate.
+        # Avoid this by estimating w_part above and below, then use the average
+        # NOTE: Possibly it only fails at exactly zero?
+        lower = avoid_zero_w_part(x, y, lambdas, weights, s0, 0.01)
         lower_p = saddlepoint_p(lower, s0, lambdas, weights)
         
-        upper = refine_w(x, y, lambdas, weights, s0, -0.01)
+        upper = avoid_zero_w_part(x, y, lambdas, weights, s0, -0.01)
         upper_p = saddlepoint_p(upper, s0, lambdas, weights)
         
         return((lower_p + upper_p) / 2)

@@ -7,7 +7,7 @@
 conditional_approximation(x, y, lambdas, weights)
 }
 \arguments{
-\item{x}{estimated summed score}
+\item{x}{tested summed score}
 
 \item{y}{observed summed score}
 

@@ -45,7 +45,7 @@ compute_pvalue <- function(de_novos, n_male, n_female, symbol, severity, mu_rate
     nsnv_o = sum(severity)
     mu_rate = mu_rate[mu_rate$gene == symbol, bases]
     
-    # recode for LOF mutations
+    # recode LOF (coded as 2) and synonymous (coded as 3) mutations
     severity[severity == 2] = 1
     severity[severity == 3] = 0
     
