@@ -80,25 +80,24 @@ conditional_approximation <- function(x, y, lambdas, weights) {
     values['w_part'] = get_w(values$s, s0, x, y, values$mu, lambdas, weights)
     
     # ensure w_part >= 0
-    refine = 10
     iter = 0
     while (values$w_part < 0 & iter < 10) {
         # TODO: I haven't covered this section with a unit test yet
         iter = iter + 1
-        values = solve_s_u(x, y, lambdas, weights, refine=refine * iter)
+        values = solve_s_u(x, y, lambdas, weights, refine=10 * iter)
         values['w_part'] = get_w(values$s, s0, x, y, values$mu, lambdas, weights)
+        
+        if (iter >= 100) { return(NA) }
     }
-    
-    if (iter >= 100) { return(NA) }
     
     if (abs(values$w_part) <= 1e-4) {
         # If w_part is close enough to zero, this can throw off the estimate.
         # Avoid this by estimating w_part above and below, then use the average
         # NOTE: Possibly it only fails at exactly zero?
-        lower = avoid_zero_w_part(x, y, lambdas, weights, s0, 0.01)
+        lower = avoid_zero_w_part(x, y, lambdas, weights, s0, increment=0.01)
         lower_p = saddlepoint_p(lower, s0, lambdas, weights)
         
-        upper = avoid_zero_w_part(x, y, lambdas, weights, s0, -0.01)
+        upper = avoid_zero_w_part(x, y, lambdas, weights, s0, increment=-0.01)
         upper_p = saddlepoint_p(upper, s0, lambdas, weights)
         
         return((lower_p + upper_p) / 2)
