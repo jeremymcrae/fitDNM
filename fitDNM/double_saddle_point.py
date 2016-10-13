@@ -32,7 +32,7 @@ def double_saddle_point_approximation(y, lambdas, weights):
     
     # increment the expected score until the delta to the previous iteration is
     # less than one part in 10,000.
-    for i in range(start, 101):
+    for i in range(int(start), 101):
         updated = conditional_approximation(i, y, lambdas, weights) * poisson.pmf(i, total_mu)
         
         if updated is None:
