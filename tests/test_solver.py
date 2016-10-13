@@ -49,7 +49,7 @@ class TestSolverPy(unittest.TestCase):
         self.assertAlmostEqual(values['s'], -688.37107872527565178, delta=1e-14)
     
     def test_solve_s_u_with_refining(self):
-        '''solve_s_u output is when we need to refine
+        '''solve_s_u output is correct when we need to refine
         '''
         
         x = 1
