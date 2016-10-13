@@ -55,7 +55,7 @@ class TestSolverPy(unittest.TestCase):
         x = 1
         y = 0.99
         lambdas = array([1e-6] * 100)
-        weights = array([ x/100 for x in range(100) ])
+        weights = array([ (i + 1)/100.0 for i in range(100) ])
         start = 10
         values = solve_s_u(x, y, lambdas, weights, start=start)
         
