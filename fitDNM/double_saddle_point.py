@@ -23,9 +23,9 @@ def double_saddle_point_approximation(y, lambdas, weights):
     total_mu = sum(lambdas)
     
     try:
-        start = ceil(y / max(weights))
-    except OverflowError:
-        return None
+        start = ceil(y / float(max(weights)))
+    except ZeroDivisionError:
+        return float('nan')
     
     if start <= 0:
         return 1
