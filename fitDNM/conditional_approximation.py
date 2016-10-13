@@ -96,14 +96,14 @@ def conditional_approximation(x, y, lambdas, weights):
     
     # ensure w_part >= 0
     i = 0
-    while values['w_part'] < 0 and i < 10:
+    while values['w_part'] < 0:
         # TODO: I haven't covered this section with a unit test yet
         i += 1
         values = solve_s_u(x, y, lambdas, weights, refine=10 * i)
         values['w_part'] = get_w(values['s'], s0, x, y, values['mu'], lambdas, weights)
         
-        if i >= 100:
-            return None
+        if i >= 10:
+            return float('nan')
     
     if abs(values['w_part']) <= 1e-4:
         # If w_part is close enough to zero, this can throw off the estimate.
