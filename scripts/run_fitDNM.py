@@ -7,7 +7,7 @@ from fitDNM.prepare_data import get_rows_to_exclude, tidy_table
 from fitDNM.gene_enrichment import compute_pvalue
 
 def get_options():
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--males', type=int, help='number of males.')
     parser.add_argument('--females', type=int, help='number of females.')
     parser.add_argument('--de-novos', help='Path to table of de novos.')
@@ -28,8 +28,8 @@ def main():
     # args.output = '../output.txt'
     
     de_novos = pandas.read_table(args.de_novos)
-    mu_rate = pandas.read_table(args.rates)
-    severity = pandas.read_table(args.severity)
+    mu_rate = pandas.read_table(args.rates, compression='gzip')
+    severity = pandas.read_table(args.severity, compression='gzip')
     
     exclude = get_rows_to_exclude(severity)
     
