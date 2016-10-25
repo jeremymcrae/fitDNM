@@ -39,7 +39,7 @@ def compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate):
     
     # count the samples in the cohort, so we can calculate expected mutations
     nsample = n_male + n_female
-    if de_novos['chr'][1] == 'X':
+    if set(de_novos['chr']) == set(['X']):
         nsample = n_male / 2 + n_female
     
     bases = ['A', 'C', 'G', 'T']
