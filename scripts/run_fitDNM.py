@@ -38,8 +38,13 @@ def main():
     
     computed = []
     for symbol in sorted(set(de_novos['gene'])):
+        print(symbol)
         values = compute_pvalue(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
+        if values is not None:
+            computed.append(values)
+        else:
+            print('cannot find mutation rates or severity scores for {}'.format(symbol))
     
     # convert the output to a table and save to disk
     computed = pandas.DataFrame(computed)
