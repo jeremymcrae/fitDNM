@@ -96,7 +96,7 @@ def compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate):
         
         # compute p-values, using saddlepoint and standard poisson approaches
         p_value = double_saddle_point_approximation(scores, mu_rate, severity)
-        p_unweighted = 1 - poisson.pmf(len(de_novos) - 1, sum(mu_rate))
+        p_unweighted = poisson.sf(len(de_novos) - 1, sum(mu_rate))
     
     values = {'symbol': symbol, 'cohort_n': nsample, 'nsnv_o': nsnv_o,
         'n_sites': nsnv, 'n_de_novos': ndenovo, 'scores': round(scores, 3),
