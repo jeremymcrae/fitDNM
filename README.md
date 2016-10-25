@@ -1,14 +1,18 @@
 This directory contain scripts and examples to run fitDNM
 
 Files included in this directory:
- - data-raw/de_novos.txt: an example de novo mutation file for input of fitDNM
- - data-raw/rates.txt.gz: Example of mutation rate file
- - data-raw/severity.txt.gz: Example of severity file
+ - `data-raw/de_novos.txt`: an example de novo mutation file for input of fitDNM
+ - `data-raw/rates.txt.gz`: Example of mutation rate file
+ - `data-raw/severity.txt.gz`: Example of severity file
 
-test.txt, test.out: subset of EE_denovo.txt and result file
-
+#### Installation
 ``` sh
-Rscript scripts/fitDNM.R \
+python setup.py install --user
+```
+
+#### Running
+``` sh
+python scripts/run_fitDNM.py \
   --males 156 \
   --females 108 \
   --de-novos data-raw/de_novos.txt \
@@ -17,11 +21,11 @@ Rscript scripts/fitDNM.R \
   --output data-raw/output.txt
 ```
 
-See script documentation with Rscript scripts/fitDNM.R --help. Alternatively,
-the arguments passed to fitDNM.R are:
+See script documentation with `python scripts/run_fitDNM.py --help`. Alternatively,
+the arguments passed to `run_fitDNM.py` are:
  - `--males` number of males in the study. e.g. 156 in example data
  - `--females` number of females in the study. e.g. 108 in example
- - `--de-novos` file contains the De novo mutation information with title line
+ - `--de-novos` file contains the de novo mutation information with title line
     (chr pos ref alt gene) Note: we cannot process chromosome Y now. e.g.
     data-raw/de_novos.txt
  - `--rates`: mutation rate for each locus. Note, the reference position is labeled
