@@ -1,4 +1,6 @@
 
+import math
+
 from numpy import array
 from scipy.stats import poisson
 
@@ -17,7 +19,7 @@ def exclude_and_get_vector(data, exclude):
     data[exclude] = None
     data = [ x for sublist in data.values.tolist() for x in sublist ]
     
-    return array([ x for x in data if x is not None ])
+    return array([ x for x in data if x is not None and not math.isnan(x) ])
 
 def compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate):
     ''' compute de novo enrichment for a gene
