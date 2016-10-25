@@ -47,7 +47,8 @@ def main():
             print('cannot find mutation rates or severity scores for {}'.format(symbol))
     
     # convert the output to a table and save to disk
-    computed = pandas.DataFrame(computed)
+    computed = pandas.DataFrame(computed, columns=['symbol', 'cohort_n',
+        'nsnv_o', 'n_sites', 'n_de_novos', 'scores', 'p_value', 'p_unweighted'])
     computed.to_csv(args.output, sep='\t', index=False)
 
 if __name__ == '__main__':
