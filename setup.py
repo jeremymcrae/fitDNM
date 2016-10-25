@@ -24,8 +24,8 @@ from setuptools import setup
 setup(
     name = "fitDNM",
     version = "0.1.0",
-    author = "Jeremy McRae",
-    author_email = "jeremy.mcrae@sanger.ac.uk",
+    author = "Yu Jiang",
+    author_email = "yu.jiang@duke.edu",
     description = ("Enrichment of de novo mutations within genes."),
     license = "MIT",
     packages=["fitDNM"],
