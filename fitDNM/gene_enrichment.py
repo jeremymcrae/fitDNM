@@ -47,11 +47,25 @@ def compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate):
     bases = ['A', 'C', 'G', 'T']
     
     severity = severity[severity['gene'] == symbol]
+    mu_rate = mu_rate[mu_rate['gene'] == symbol]
+    mu_rate = mu_rate[~mu_rate['pos'].duplicated()]
+    
+    positions = set(mu_rate['pos']) & set(severity['pos'])
+    severity = severity[severity['pos'].isin(positions)]
+    mu_rate = mu_rate[mu_rate['pos'].isin(positions)]
+    
+    mu_rate = mu_rate.sort('pos')
+    severity = severity.sort('pos')
+    
+    mu_rate = mu_rate.reset_index()
+    severity = severity.reset_index()
+    
+    mu_rate = mu_rate[bases]
+    
     positions = severity['pos']
     ref_allele = severity['ref']
     severity = severity[bases]
     nsnv_o = severity.sum().sum()
-    mu_rate = mu_rate[bases][mu_rate['gene'] == symbol]
     
     # recode LOF (coded as 2) and synonymous (coded as 3) mutations
     severity[severity == 2] = 1
