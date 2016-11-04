@@ -7,6 +7,8 @@ import pandas
 from fitDNM.prepare_data import get_rows_to_exclude, tidy_table
 from fitDNM.gene_enrichment import compute_pvalue
 from fitDNM.mutation_rates import get_gene_rates
+from fitDNM.open_severity import get_cadd_severity
+from fitDNM.utils import open_gencode, get_gene_coords
 
 def get_options():
     ''' parse the command line arguments
@@ -17,6 +19,7 @@ def get_options():
     parser.add_argument('--females', type=int, help='number of females.')
     parser.add_argument('--de-novos', help='Path to table of de novos.')
     parser.add_argument('--severity', help='Path to table of per base and allele severity scores.')
+    parser.add_argument('--gencode', help='Path to gencode table containing gene ranges.')
     parser.add_argument('--output', help='Path to put output files into.')
     
     parser.add_argument("--genome-build", dest="genome_build", choices=["grch37",
@@ -39,10 +42,7 @@ def main():
     # args.output = '../output.txt'
     
     de_novos = pandas.read_table(args.de_novos)
-    
-    severity = pandas.read_table(args.severity, compression='gzip')
-    exclude = get_rows_to_exclude(severity)
-    severity = tidy_table(severity, exclude)
+    gencode = open_gencode(args.gencode)
     
     computed = []
     for symbol in sorted(set(de_novos['gene'])):
@@ -53,6 +53,7 @@ def main():
         except IndexError:
             continue
         
+        severity = get_cadd_severity(symbol, gencode, args.severity)
         values = compute_pvalue(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
         
