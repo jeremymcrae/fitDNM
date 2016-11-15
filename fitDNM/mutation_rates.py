@@ -49,8 +49,13 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_dict=None):
     # convert the list of dictionaries to a DataFrame, then reshape to the
     # required form for fitDNM
     mu_rate = pandas.DataFrame(mu_rate)
-    mu_rate = mu_rate.pivot_table(rows=['gene', 'chrom', 'pos', 'ref'],
-        cols='alt', values='prob', fill_value=0.0)
+    if pandas.__version__ < "0.14.0":
+        mu_rate = mu_rate.pivot_table(rows=['gene', 'chrom', 'pos', 'ref'],
+            cols='alt', values='prob', fill_value=0.0)
+    else:
+        mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
+            columns='alt', values='prob', fill_value=0.0)
+    
     
     return flatten_indexed_table(mu_rate)
 
