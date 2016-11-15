@@ -76,6 +76,6 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         expected = {'symbol': 'GENE1', 'cohort_n': 200, 'nsnv_o': 203.55408782993436,
             'n_sites': 100, 'n_de_novos': 2, 'scores': 1.825,
-            'p_value': 1.9947173989116361e-07, 'p_unweighted': 0.99673304117510675}
+            'p_value': 1.9947173989116361e-07, 'p_unweighted': 5.3598844780382316e-06}
         
         self.assertEqual(values, expected)

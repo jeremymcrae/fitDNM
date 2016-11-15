@@ -23,7 +23,7 @@ before_install:
  - pip install --no-index --find-links=$HOME/.cache/pip/wheels cython
  - pip install --no-index --find-links=$HOME/.cache/pip/wheels scipy
  - pip install --no-index --find-links=$HOME/.cache/pip/wheels pandas
- - pip install git+git://github.com/jeremymcrae/denovonear.git --user
+ - pip install git+git://github.com/jeremymcrae/denovonear.git
 install:
   - python setup.py install
   - pip install coveralls
