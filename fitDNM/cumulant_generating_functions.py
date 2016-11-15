@@ -26,7 +26,7 @@ def cgf_0(mu, s, lambdas, weights):
     return sum(values)
 
 def cgf_2(mu, s, lambdas, weights):
-    '''#' cumulant generating function, second derivative
+    ''' cumulant generating function, second derivative
     
     The second derivative is calculated as:
     
