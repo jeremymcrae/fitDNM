@@ -18,8 +18,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import unittest
 import math
+import sys
 
 import numpy
+
+IS_PYTHON3 = sys.version_info.major == 3
 
 class CompareTables(unittest.TestCase):
     def compare_tables(self, first, second):
@@ -44,10 +47,11 @@ class CompareTables(unittest.TestCase):
                 first_val = first[column][idx]
                 second_val = second[column][idx]
                 
-                if type(first_val) == unicode:
-                    first_val = first_val.encode('utf8')
-                if type(second_val) == unicode:
-                    second_val = second_val.encode('utf8')
+                if not IS_PYTHON3:
+                    if type(first_val) == unicode:
+                        first_val = first_val.encode('utf8')
+                    if type(second_val) == unicode:
+                        second_val = second_val.encode('utf8')
                 
                 # prepare a suitable diagnostic error message if the values are
                 #  not equal
