@@ -8,9 +8,15 @@ cache:
     - $HOME/.cache/pip
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - libatlas-base-dev
       - gfortran
+      - gcc-4.9
+      - g++-4.9
+env:
+    - CC=gcc-4.9 CXX=g++-4.9
 before_install:
  - mkdir -p $HOME/.cache/pip/wheels
  # build wheel only if none present
