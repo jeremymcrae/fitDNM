@@ -4,3 +4,5 @@ dist/
 cache/
 *.egg-info/
 *.pyc
+*.log
+
