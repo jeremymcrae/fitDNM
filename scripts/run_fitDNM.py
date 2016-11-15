@@ -8,7 +8,6 @@ from fitDNM.prepare_data import get_rows_to_exclude, tidy_table
 from fitDNM.gene_enrichment import compute_pvalue
 from fitDNM.mutation_rates import get_gene_rates
 from fitDNM.open_severity import get_cadd_severity
-from fitDNM.utils import open_gencode, get_gene_coords
 
 def get_options():
     ''' parse the command line arguments
@@ -18,8 +17,7 @@ def get_options():
     parser.add_argument('--males', type=int, help='number of males.')
     parser.add_argument('--females', type=int, help='number of females.')
     parser.add_argument('--de-novos', help='Path to table of de novos.')
-    parser.add_argument('--severity', help='Path to table of per base and allele severity scores.')
-    parser.add_argument('--gencode', help='Path to gencode table containing gene ranges.')
+    parser.add_argument('--severity', help='Path to table of per base and allele CADD severity scores.')
     parser.add_argument('--output', help='Path to put output files into.')
     
     parser.add_argument("--genome-build", dest="genome_build", choices=["grch37",
@@ -34,15 +32,7 @@ def get_options():
 def main():
     args = get_options()
     
-    # args.males = 156
-    # args.females = 108
-    # args.de_novos = '../data-raw/de_novos.txt'
-    # args.rates = '../data-raw/rates.txt.gz'
-    # args.severity = '../data-raw/severity.txt.gz'
-    # args.output = '../output.txt'
-    
     de_novos = pandas.read_table(args.de_novos)
-    gencode = open_gencode(args.gencode)
     
     computed = []
     for symbol in sorted(set(de_novos['gene'])):
@@ -53,7 +43,9 @@ def main():
         except IndexError:
             continue
         
-        severity = get_cadd_severity(symbol, gencode, args.severity)
+        chrom, start, end = str(mu_rate['chrom'][0]), min(mu_rate['pos']), max(mu_rate['pos'])
+        
+        severity = get_cadd_severity(symbol, chrom, start, end, args.severity)
         values = compute_pvalue(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
         

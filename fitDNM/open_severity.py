@@ -5,9 +5,8 @@ import pandas
 import pysam
 
 from fitDNM.mutation_rates import flatten_indexed_table
-from fitDNM.utils import get_gene_coords
 
-def get_cadd_severity(symbol, gencode,
+def get_cadd_severity(symbol, chrom, start, end,
         cadd_path='/lustre/scratch113/projects/ddd/users/ps14/CADD/whole_genome_SNVs.tsv.gz'):
     ''' get per nucleotide mutation rates for all SNV alt alleles in a gene
     
@@ -19,13 +18,12 @@ def get_cadd_severity(symbol, gencode,
         chrom: chromosome
         start: start position
         end: end position
+        cadd_path: path to CADD file (bgzip compressed and tabix-indexed)
     
     Returns:
         pandas DataFrame of severity scores at each possible SNV change within
         a genome region.
     '''
-    
-    chrom, start, end = get_gene_coords(symbol, gencode)
     
     tabix = pysam.TabixFile(cadd_path)
     
