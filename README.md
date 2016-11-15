@@ -16,7 +16,6 @@ python scripts/run_fitDNM.py \
   --females 108 \
   --de-novos examples/de_novos.txt \
   --severity CADD_SNV_PATH \
-  --gencode GENCODE_PATH \
   --output examples/output.txt
 ```
 
@@ -30,6 +29,4 @@ the arguments passed to `run_fitDNM.py` are:
  - `--severity` path to table of CADD scores for SNVs throughout the genome. See
     http://cadd.gs.washington.edu/download. The file must be bgzip compressed and
     tabix-indexed for rapid access.
- - `--gencode` path to table of GENCODE coordinates for genes throughout the
-    genome.
  - `--output` file to output results. e.g. output.txt
