@@ -44,6 +44,11 @@ class CompareTables(unittest.TestCase):
                 first_val = first[column][idx]
                 second_val = second[column][idx]
                 
+                if type(first_val) == unicode:
+                    first_val = first_val.encode('utf8')
+                if type(second_val) == unicode:
+                    second_val = second_val.encode('utf8')
+                
                 # prepare a suitable diagnostic error message if the values are
                 #  not equal
                 if type(first_val) == str or first_val is None or type(first_val) == numpy.bool_:
