@@ -29,7 +29,7 @@ def get_cadd_severity(symbol, chrom, start, end,
     
     with tempfile.TemporaryFile() as handle:
         for x in tabix.fetch(chrom, start, end):
-            handle.write(x + '\n')
+            handle.write((x + '\n').encode('utf8'))
         
         # ensure all the data is written, and we can read from the start
         handle.flush()
@@ -41,8 +41,13 @@ def get_cadd_severity(symbol, chrom, start, end,
     # scale the cadd scores between 0-1
     cadd['score'] = 1 - 10**-(cadd['score']/10)
     cadd['gene'] = symbol
+    cadd['chrom'] = cadd['chrom'].astype(str)
     
-    cadd = cadd.pivot_table(rows=['chrom', 'pos', 'gene', 'ref'],
-        cols='alt', values='score' ,fill_value=0.0)
+    if pandas.__version__ < "0.14.0":
+        cadd = cadd.pivot_table(rows=['chrom', 'pos', 'gene', 'ref'],
+            cols='alt', values='score' ,fill_value=0.0)
+    else:
+        cadd = cadd.pivot_table(index=['chrom', 'pos', 'gene', 'ref'],
+            columns='alt', values='score' ,fill_value=0.0)
     
     return flatten_indexed_table(cadd)
