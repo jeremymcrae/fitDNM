@@ -56,7 +56,6 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_dict=None):
         mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
             columns='alt', values='prob', fill_value=0.0)
     
-    
     return flatten_indexed_table(mu_rate)
 
 def flatten_indexed_table(data):
