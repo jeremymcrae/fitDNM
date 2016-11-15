@@ -33,6 +33,7 @@ setup(
                       'scipy >= 0.9.0',
                       'numpy >= 1.6.1',
                       'denovonear >= 0.1.4'
+                      'pysam >= 0.7.0'
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
