@@ -1,13 +1,19 @@
-This directory contain scripts and examples to run fitDNM
+### fitDNM (python-style)
+This repository contains the [fitDNM *de novo* enrichment model](http://dx.doi.org/10.1016/j.ajhg.2015.06.013)
+converted to python. 
 
-Files included in this directory:
- - `examples/de_novos.txt`: an example de novo mutation file for input of fitDNM
- - `examples/output.txt`: an example output file of fitDNM
+In addition to the python conversion, this code changes some inputs:
+ - loads mutation rates on the fly
+ - uses CADD severity scores rather than PolyPhen scores.
 
 #### Installation
 ``` sh
 python setup.py install --user
 ```
+
+#### Example files
+ - `examples/de_novos.txt`: an example de novo mutation file for input of fitDNM
+ - `examples/output.txt`: an example output file of fitDNM
 
 #### Running
 ``` sh
