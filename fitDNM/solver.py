@@ -80,6 +80,6 @@ def solve_s_u(x, y, lambdas, weights, delta=10, refine=5, start=0):
             val = solver(val['current'], initial_sign, ratio, lambdas, weights, delta)
     
     mu = (val['current'] + val['updated']) / 2
-    s = log(x / sum(lambdas * exp(weights * mu)))
+    s = log(x) - log(sum(lambdas * exp(weights * mu)))
     
     return {'s': s, 'mu': mu}
