@@ -43,11 +43,7 @@ def get_cadd_severity(symbol, chrom, start, end,
     cadd['gene'] = symbol
     cadd['chrom'] = cadd['chrom'].astype(str)
     
-    if pandas.__version__ < "0.14.0":
-        cadd = cadd.pivot_table(rows=['chrom', 'pos', 'gene', 'ref'],
-            cols='alt', values='score' ,fill_value=0.0)
-    else:
-        cadd = cadd.pivot_table(index=['chrom', 'pos', 'gene', 'ref'],
-            columns='alt', values='score' ,fill_value=0.0)
+    cadd = cadd.pivot_table(index=['chrom', 'pos', 'gene', 'ref'],
+        columns='alt', values='score' ,fill_value=0.0)
     
     return flatten_indexed_table(cadd)

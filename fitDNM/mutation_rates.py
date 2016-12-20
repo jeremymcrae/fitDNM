@@ -37,9 +37,9 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_path=None):
     mu_rate = []
     for transcript in transcripts:
         rates = SiteRates(transcript, mut_dict)
-        for cq in ['nonsense', 'missense', 'synonymous', 'splice_region']:
+        for cq in ['nonsense', 'missense', 'synonymous', 'splice_lof', 'splice_region']:
             for choice in rates[cq]:
-                choice['pos'] = transcript.get_position_on_chrom(choice['pos'])
+                choice['pos'] = transcript.get_position_on_chrom(choice['pos'], choice['offset'])
                 choice['gene'] = symbol
                 choice['chrom'] = chrom
                 mu_rate.append(choice)
@@ -47,12 +47,8 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_path=None):
     # convert the list of dictionaries to a DataFrame, then reshape to the
     # required form for fitDNM
     mu_rate = pandas.DataFrame(mu_rate)
-    if pandas.__version__ < "0.14.0":
-        mu_rate = mu_rate.pivot_table(rows=['gene', 'chrom', 'pos', 'ref'],
-            cols='alt', values='prob', fill_value=0.0)
-    else:
-        mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
-            columns='alt', values='prob', fill_value=0.0)
+    mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
+        columns='alt', values='prob', fill_value=0.0)
     
     return flatten_indexed_table(mu_rate)
 
