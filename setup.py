@@ -29,11 +29,11 @@ setup(
     description = ("Enrichment of de novo mutations within genes."),
     license = "MIT",
     packages=["fitDNM"],
-    install_requires=['pandas >= 0.13.1',
-                      'scipy >= 0.9.0',
-                      'numpy >= 1.6.1',
+    install_requires=['pandas >= 0.15.0',
+                      'scipy >= 0.15.0',
+                      'numpy >= 1.9.0',
                       'denovonear >= 0.2.1',
-                      'pysam >= 0.7.0'
+                      'pysam >= 0.9.0'
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
