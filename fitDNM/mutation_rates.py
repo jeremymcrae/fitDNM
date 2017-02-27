@@ -31,9 +31,6 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_path=None):
     transcripts = load_gene(ensembl, symbol, positions)
     chrom = transcripts[0].get_chrom()
     
-    # TODO: currently missing splice_lof sites, because they have been assigned
-    # TODO: to the nearest exon boundary, which duplicates positions and raises
-    # TODO: an error in the pivot_table()
     mu_rate = []
     for transcript in transcripts:
         rates = SiteRates(transcript, mut_dict)
@@ -48,7 +45,9 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_path=None):
     # required form for fitDNM
     mu_rate = pandas.DataFrame(mu_rate)
     mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
-        columns='alt', values='prob', fill_value=0.0)
+        columns='alt', values='prob')
+    
+    mu_rate = mu_rate.fillna(0)
     
     return flatten_indexed_table(mu_rate)
 
