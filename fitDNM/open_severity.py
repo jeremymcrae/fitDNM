@@ -1,6 +1,4 @@
 
-import tempfile
-
 import pandas
 import pysam
 
@@ -27,16 +25,12 @@ def get_cadd_severity(symbol, chrom, start, end,
     
     tabix = pysam.TabixFile(cadd_path)
     
-    with tempfile.TemporaryFile() as handle:
-        for x in tabix.fetch(chrom, start, end):
-            handle.write((x + '\n').encode('utf8'))
+    def parse(line):
+        chrom, pos, ref, alt, raw, scaled = line.split('\t')
+        return {'chrom': chrom, 'pos': int(pos), 'ref': ref, 'alt': alt,
+            'raw': float(raw), 'score': float(scaled)}
         
-        # ensure all the data is written, and we can read from the start
-        handle.flush()
-        handle.seek(0)
-        
-        cadd = pandas.read_table(handle, header=None,
-            names=['chrom', 'pos', 'ref', 'alt', 'raw', 'score'])
+    cadd = pandas.DataFrame([ parse(x) for x in tabix.fetch(chrom, start, end) ])
     
     # scale the cadd scores between 0-1
     cadd['score'] = 1 - 10**-(cadd['score']/10)
