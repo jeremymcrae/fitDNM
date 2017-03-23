@@ -13,11 +13,8 @@ def downweight_severity(data):
     '''
     
     data['value'] = data['prob'] * data['score']
-    
     recode = dict([ (pos, sum(x['value'])) for pos, x in data.groupby('pos') ])
-    
     data['score'] = data['score'] - data['pos'].map(recode)
-    
     del data['value']
     
     return data
@@ -87,15 +84,8 @@ def compute_pvalue(de_novos, n_male, n_female, symbol, severity, rates):
     de_novos = de_novos.merge(data, on=['gene', 'chrom', 'pos', 'ref', 'alt'])
     observed_score = sum(de_novos['score'])
     
-    # TODO: check that this works when we lack de novos and/or mutation rates
     p_value = double_saddle_point_approximation(observed_score, data['prob'], data['score'])
     p_unweighted = poisson.sf(len(de_novos) - 1, sum(data['prob']))
-    
-    # # genes without mutation rates, or lacking de novos, get P = 1.0
-    # p_value, p_unweighted = 1.0, 1.0
-    # if len(de_novos) > 0:
-    #     p_value = double_saddle_point_approximation(observed_score, data['prob'], data['score'])
-    #     p_unweighted = poisson.sf(len(de_novos) - 1, sum(data['prob']))
     
     return {'symbol': symbol, 'nsnv_o': sum(data['score']),
         'n_sites': len(set(data['pos'])), 'n_de_novos': len(de_novos),
