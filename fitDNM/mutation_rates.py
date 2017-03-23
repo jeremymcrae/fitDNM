@@ -41,34 +41,10 @@ def get_gene_rates(symbol, de_novos, ensembl=None, mut_path=None):
                 choice['chrom'] = chrom
                 mu_rate.append(choice)
     
-    # convert the list of dictionaries to a DataFrame, then reshape to the
-    # required form for fitDNM
-    mu_rate = pandas.DataFrame(mu_rate)
-    mu_rate = mu_rate.pivot_table(index=['gene', 'chrom', 'pos', 'ref'],
-        columns='alt', values='prob')
+    data = pandas.DataFrame(mu_rate)
+    data = data.sort_values(['chrom', 'pos', 'alt'])
+    data = data.reset_index(drop=True)
+    data['chrom'] = data['chrom'].astype(str)
+    del data['offset']
     
-    mu_rate = mu_rate.fillna(0)
-    
-    return flatten_indexed_table(mu_rate)
-
-def flatten_indexed_table(data):
-    ''' integrates MultiIndex columns in a DataFrame into the table
-    
-    Args:
-        data: pandas DataFrame, with a MultiIndex following a pivot_table()
-            reshaping of a DataFrame.
-    
-    Returns:
-        table where the index columns are now columns within the table
-    '''
-    
-    idx_names = list(data.index.names)
-    idx_data = [ list(data.index.get_level_values(x)) for x in idx_names ]
-    
-    col_names = list(data.columns)
-    col_data = [ list(data[x]) for x in col_names ]
-    
-    # convert to a dictionary, indexed by column names, to use in DataFrame
-    flattened = dict(zip(idx_names + col_names, idx_data + col_data))
-    
-    return pandas.DataFrame(flattened, columns=idx_names + col_names)
+    return data
