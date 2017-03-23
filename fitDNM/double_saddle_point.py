@@ -28,7 +28,7 @@ def double_saddle_point_approximation(y, lambdas, weights):
         return float('nan')
     
     if start <= 0:
-        return 1
+        return 1.0
     
     # increment the expected score until the delta to the previous iteration is
     # less than one part in 10,000.
