@@ -33,7 +33,7 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         table.
         '''
         
-        table = ['gene  chr  pos  alt',
+        table = ['gene  chrom  pos  alt',
                 'GENE1   1    1    G',
                 'GENE1   1    2    T',
                 'GENEX   X    2    T']
@@ -58,24 +58,24 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         n_female = 100
         de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
         
-        bases = ['A', 'C', 'G', 'T']
-        severity = pandas.DataFrame({'gene': ['GENE1'] * 100,
-            'chr': ['1'] * 100, 'pos': range(1, 101), 'ref': [ random.choice(bases) for x in range(100) ],
-            'A': uniform(size=100), 'C': uniform(size=100),
-            'G': uniform(size=100), 'T': uniform(size=100)})
-        
-        mu_rate = pandas.DataFrame({'gene': ['GENE1'] * 100,
-            'chr': ['1'] * 100, 'pos': range(1, 101), 'ref': [ random.choice(bases) for x in range(100) ],
-            'A': 10**(normal(size=100, loc=-8, scale=0.5)),
-            'C': 10**(normal(size=100, loc=-8, scale=0.5)),
-            'G': 10**(normal(size=100, loc=-8, scale=0.5)),
-            'T': 10**(normal(size=100, loc=-8, scale=0.5))})
-        
         symbol = 'GENE1'
+        bases = ['A', 'C', 'G', 'T']
+        symbols = [symbol] * 400
+        chrom = ['1'] * 400
+        pos = list(range(1, 101)) * 4
+        ref = [ random.choice(bases) for x in range(100) ] * 4
+        alts = [ y for x in bases for y in [x] * 100 ]
+        
+        severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'score': uniform(size=400)})
+        
+        mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'prob': 10**(normal(size=400, loc=-8, scale=0.5))})
+        
         values = compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate)
         
-        expected = {'symbol': 'GENE1', 'cohort_n': 200, 'nsnv_o': 203.55408782993436,
+        expected = {'symbol': 'GENE1', 'nsnv_o': 203.55406926527692,
             'n_sites': 100, 'n_de_novos': 2, 'scores': 1.825,
-            'p_value': 1.9947173989116361e-07, 'p_unweighted': 5.3598844780382316e-06}
+            'p_value': 1.9947054872397942e-07, 'p_unweighted': 5.3598844780382316e-06}
         
         self.assertEqual(values, expected)
