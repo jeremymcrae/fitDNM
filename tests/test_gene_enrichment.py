@@ -12,7 +12,6 @@ except ImportError:
 IS_PYTHON3 = sys.version_info.major == 3
 
 import pandas
-from numpy import array
 from numpy.random import beta, uniform, normal, seed
 
 from fitDNM.gene_enrichment import compute_pvalue
@@ -79,3 +78,55 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
             'p_value': 1.9947054872397942e-07, 'p_unweighted': 5.3598844780382316e-06}
         
         self.assertEqual(values, expected)
+    
+    def test_compute_pvalue_zero_de_novos(self):
+        ''' compute_pvalue output is correct when the do novos are not in the
+        sites covered by the rates or severity
+        '''
+        
+        tab = self.get_de_novo_table()
+        
+        n_male = 100
+        n_female = 100
+        de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        
+        symbol = 'GENE1'
+        bases = ['A', 'C', 'G', 'T']
+        symbols = [symbol] * 400
+        chrom = ['1'] * 400
+        pos = list(range(101, 201)) * 4
+        ref = [ random.choice(bases) for x in range(100) ] * 4
+        alts = [ y for x in bases for y in [x] * 100 ]
+        
+        severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'score': uniform(size=400)})
+        
+        mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'prob': 10**(normal(size=400, loc=-8, scale=0.5))})
+        
+        values = compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate)
+        
+        expected = {'symbol': 'GENE1', 'nsnv_o': 203.55406926527692,
+            'n_sites': 100, 'n_de_novos': 0, 'scores': 0,
+            'p_value': 1.0, 'p_unweighted': 1.0}
+        
+        self.assertEqual(values, expected)
+    
+    def test_compute_pvalue_no_rates(self):
+        ''' compute_pvalue output is correct when we lack rate or severity data
+        '''
+        
+        n_male = 100
+        n_female = 100
+        de_novos = pandas.read_table(self.get_de_novo_table(),
+            delim_whitespace=True, skipinitialspace=True)
+        
+        symbol = 'GENE1'
+        severity = pandas.DataFrame(columns=['gene', 'chrom', 'pos', 'ref',
+            'alt', 'score'])
+        rates = pandas.DataFrame(columns=['gene', 'chrom', 'pos', 'ref',
+            'alt', 'prob'])
+        
+        with self.assertRaises(ValueError):
+            compute_pvalue(de_novos, n_male, n_female, symbol, severity, rates)
+        
