@@ -4,7 +4,6 @@ import argparse
 
 import pandas
 
-from fitDNM.prepare_data import get_rows_to_exclude, tidy_table
 from fitDNM.gene_enrichment import compute_pvalue
 from fitDNM.mutation_rates import get_gene_rates
 from fitDNM.open_severity import get_cadd_severity
