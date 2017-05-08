@@ -1,4 +1,4 @@
-chr	pos	ref	alt	gene
+chrom	pos	ref	alt	gene
 2	166870322	G	A	SCN1A
 2	166894356	C	T	SCN1A
 2	166848563	C	G	SCN1A

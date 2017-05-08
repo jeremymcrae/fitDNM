@@ -19,6 +19,7 @@ def get_options():
     parser.add_argument('--severity', help='Path to table of per base and allele CADD severity scores.')
     parser.add_argument('--rates', help='Path to table of sequence context '
         'based rates. Defaults to Kaitlin Samocha\'s trinucleotide-based rates.')
+    parser.add_argument('--constraint', help='Path to table of regional constraint.')
     parser.add_argument('--output', help='Path to put output files into.')
     
     parser.add_argument("--genome-build", dest="genome_build", choices=["grch37",
@@ -40,7 +41,7 @@ def main():
         print(symbol)
         
         try:
-            mu_rate = get_gene_rates(symbol, de_novos, mut_path=args.rates)
+            mu_rate = get_gene_rates(symbol, de_novos, args.constraint, mut_path=args.rates)
         except IndexError:
             continue
         
@@ -49,15 +50,11 @@ def main():
         severity = get_cadd_severity(symbol, chrom, start, end, args.severity)
         values = compute_pvalue(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
-        
-        if values is not None:
-            computed.append(values)
-        else:
-            print('cannot find mutation rates or severity scores for {}'.format(symbol))
+        computed.append(values)
     
     # convert the output to a table and save to disk
-    computed = pandas.DataFrame(computed, columns=['symbol', 'cohort_n',
-        'nsnv_o', 'n_sites', 'n_de_novos', 'scores', 'p_value', 'p_unweighted'])
+    computed = pandas.DataFrame(computed, columns=['symbol', 'gene_scores',
+        'sites', 'de_novos', 'de_novos_score', 'p_value', 'p_unweighted'])
     computed.to_csv(args.output, sep='\t', index=False)
 
 if __name__ == '__main__':
