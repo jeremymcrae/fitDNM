@@ -35,6 +35,7 @@ def main():
     args = get_options()
     
     de_novos = pandas.read_table(args.de_novos)
+    de_novos['chrom'] = de_novos['chrom'].astype(str)
     
     computed = []
     for symbol in sorted(set(de_novos['gene'])):
