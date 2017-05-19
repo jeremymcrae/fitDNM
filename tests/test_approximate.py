@@ -7,7 +7,7 @@ from math import isnan
 
 from numpy.random import beta, uniform, normal, seed
 
-from fitDNM.conditional_approximation import conditional_approximation
+from fitDNM.approximate import approximate
 
 class TestConditionalApproximationPy(unittest.TestCase):
     ''' unit test the conditional approximation function
@@ -20,18 +20,18 @@ class TestConditionalApproximationPy(unittest.TestCase):
         seed(1)
         random.seed(1)
     
-    def test_conditional_approximation(self):
-        ''' check conditional_approximation is correct
+    def test_approximate(self):
+        ''' check approximate is correct
         '''
         
         x = 1
         y = 1
         lambdas = normal(loc=1e-4, scale=1e-5, size=1000)
         weights = beta(a=0.5, b=0.5, size=1000)
-        self.assertEqual(conditional_approximation(x, y, lambdas, weights), 0.011558509232964654)
+        self.assertEqual(approximate(x, y, lambdas, weights), 0.011558509232964654)
     
-    def test_conditional_approximation_low_w_part(self):
-        ''' check conditional_approximation for low w_part values
+    def test_approximate_low_w_part(self):
+        ''' check approximate for low w_part values
         '''
         
         seed(13)
@@ -40,14 +40,14 @@ class TestConditionalApproximationPy(unittest.TestCase):
         y = 1
         lambdas = normal(loc=1e-4, scale=1e-5, size=1000)
         weights = uniform(size=1000)
-        self.assertEqual(conditional_approximation(x, y, lambdas, weights), 0.49792912429037084)
+        self.assertEqual(approximate(x, y, lambdas, weights), 0.49792912429037084)
     
-    def test_conditional_approximation_w_part_below_zero(self):
-        ''' check conditional_approximation for w_part < 0
+    def test_approximate_w_part_below_zero(self):
+        ''' check approximate for w_part < 0
         '''
         
         x = 1.001
         y = 1
         lambdas = normal(loc=1e-4, scale=1e-5, size=1000)
         weights = uniform(size=1000)
-        self.assertTrue(isnan(conditional_approximation(x, y, lambdas, weights)))
+        self.assertTrue(isnan(approximate(x, y, lambdas, weights)))

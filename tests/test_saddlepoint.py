@@ -7,7 +7,7 @@ from math import isnan
 from numpy import array
 from numpy.random import beta, uniform, normal, seed
 
-from fitDNM.double_saddle_point import double_saddle_point_approximation
+from fitDNM.saddlepoint import saddlepoint
 
 class TestDoubleSaddlePointPy(unittest.TestCase):
     ''' double saddle point approximation checks
@@ -17,34 +17,34 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         seed(1)
         random.seed(1)
     
-    def test_double_saddle_point_approximation(self):
-        '''double_saddle_point_approximation output is correct
+    def test_saddlepoint(self):
+        '''saddlepoint output is correct
         '''
         
         y = 1
         lambdas = normal(size=1000, loc=1e-4, scale=1e-5)
         weights = beta(size=1000, a=0.5, b=0.5)
-        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 0.0022951333364715112)
+        self.assertEqual(saddlepoint(y, lambdas, weights), 0.0022951333364715112)
     
-    def test_double_saddle_point_approximation_zero_values(self):
-        '''double_saddle_point_approximation output is correct when the start value equals 0
+    def test_saddlepoint_zero_values(self):
+        '''saddlepoint output is correct when the start value equals 0
         '''
         
         # and check that if we have e
         y = 0
         lambdas = normal(size=1000, loc=1e-4, scale=1e-5)
         weights = beta(size=1000, a=0.5, b=0.5)
-        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 1)
+        self.assertEqual(saddlepoint(y, lambdas, weights), 1)
         
         y = 1
         weights = array([0] * 1000)
-        self.assertTrue(isnan(double_saddle_point_approximation(y, lambdas, weights)))
+        self.assertTrue(isnan(saddlepoint(y, lambdas, weights)))
     
-    def test_double_saddle_point_approximation_uniform(self):
-        '''double_saddle_point_approximation output is correct
+    def test_saddlepoint_uniform(self):
+        '''saddlepoint output is correct
         '''
         
         y = 1
         lambdas = normal(size=1000, loc=1e-5, scale=1e-5)
         weights = uniform(size=1000)
-        self.assertEqual(double_saddle_point_approximation(y, lambdas, weights), 2.7451994001564722e-05)
+        self.assertEqual(saddlepoint(y, lambdas, weights), 2.7451994001564722e-05)
