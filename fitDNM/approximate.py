@@ -75,7 +75,7 @@ def saddlepoint_p(values, s0, lambdas, weights):
     
     return p_value
 
-def conditional_approximation(x, y, lambdas, weights):
+def approximate(x, y, lambdas, weights):
     ''' conditional approximation
     
     Args:

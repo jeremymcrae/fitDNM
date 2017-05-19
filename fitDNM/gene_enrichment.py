@@ -4,7 +4,7 @@ import math
 from numpy import array
 from scipy.stats import poisson
 
-from fitDNM.double_saddle_point import double_saddle_point_approximation
+from fitDNM.saddlepoint import saddlepoint
 
 def downweight_severity(data):
     ''' downweight severities by the rate across the alleles at each site
@@ -91,7 +91,7 @@ def weight_site(site, weights, lof_weight):
     
     return None
 
-def compute_pvalue(de_novos, n_male, n_female, symbol, severity, rates):
+def enrichment(de_novos, n_male, n_female, symbol, severity, rates):
     ''' compute de novo enrichment for a gene
     
     Args:
@@ -147,7 +147,7 @@ def compute_pvalue(de_novos, n_male, n_female, symbol, severity, rates):
     de_novos = de_novos.merge(data, on=['gene', 'chrom', 'pos', 'ref', 'alt'])
     observed_score = sum(de_novos['score'])
     
-    p_value = double_saddle_point_approximation(observed_score, data['prob'], data['score'])
+    p_value = saddlepoint(observed_score, data['prob'], data['score'])
     p_unweighted = poisson.sf(len(de_novos) - 1, sum(data['prob']))
     
     return {'symbol': symbol, 'gene_scores': sum(data['score']),

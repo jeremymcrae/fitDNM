@@ -4,7 +4,7 @@ import argparse
 
 import pandas
 
-from fitDNM.gene_enrichment import compute_pvalue
+from fitDNM.gene_enrichment import enrichment
 from fitDNM.mutation_rates import get_gene_rates
 from fitDNM.open_severity import get_cadd_severity
 
@@ -49,7 +49,7 @@ def main():
         chrom, start, end = str(mu_rate['chrom'][0]), min(mu_rate['pos']), max(mu_rate['pos'])
         
         severity = get_cadd_severity(symbol, chrom, start, end, args.severity)
-        values = compute_pvalue(de_novos, args.males, args.females, symbol,
+        values = enrichment(de_novos, args.males, args.females, symbol,
                 severity, mu_rate)
         computed.append(values)
     
