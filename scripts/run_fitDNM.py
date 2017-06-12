@@ -1,6 +1,7 @@
 
 import os
 import argparse
+import sys
 
 import pandas
 
@@ -20,7 +21,8 @@ def get_options():
     parser.add_argument('--rates', help='Path to table of sequence context '
         'based rates. Defaults to Kaitlin Samocha\'s trinucleotide-based rates.')
     parser.add_argument('--constraint', help='Path to table of regional constraint.')
-    parser.add_argument('--output', help='Path to put output files into.')
+    parser.add_argument('--output', help='Path to put output files into.',
+        default=sys.stdout)
     
     parser.add_argument("--genome-build", dest="genome_build", choices=["grch37",
         "GRCh37", "grch38", "GRCh38"], default="grch37", help="Genome build " \
@@ -56,7 +58,7 @@ def main():
     # convert the output to a table and save to disk
     computed = pandas.DataFrame(computed, columns=['symbol', 'gene_scores',
         'sites', 'de_novos', 'de_novos_score', 'p_value', 'p_unweighted'])
-    computed.to_csv(args.output, sep='\t', index=False)
+    computed.to_csv(args.output, sep='\t', index=False, na_rep='NA')
 
 if __name__ == '__main__':
     main()
