@@ -10,7 +10,7 @@ from denovonear.ensembl_requester import EnsemblRequest
 from denovonear.load_mutation_rates import load_mutation_rates
 from denovonear.site_specific_rates import SiteRates
 
-def get_gene_rates(symbol, de_novos, constraint_path, ensembl=None, mut_path=None):
+def get_gene_rates(symbol, de_novos, constraint=None, ensembl=None, mut_path=None):
     ''' get per nucleotide mutation rates for all SNV alt alleles in a gene
     
     Args:
@@ -29,7 +29,11 @@ def get_gene_rates(symbol, de_novos, constraint_path, ensembl=None, mut_path=Non
     if ensembl is None:
         ensembl = EnsemblRequest('cache', 'grch37')
     
-    constraint = load_regional_constraint(constraint_path)
+    if constraint is not None:
+        constraint = load_regional_constraint(constraint)
+    else:
+        constraint = {'gene': set([])}
+    
     positions = de_novos['pos'][de_novos['gene'] == symbol]
     transcripts = load_gene(ensembl, symbol, positions)
     chrom = transcripts[0].get_chrom()
