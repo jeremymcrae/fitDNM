@@ -9,6 +9,9 @@ from numpy import sign, exp, log
 def cgf_ratio(lambdas, weights, mu):
     ''' get CGF-like ratio
     
+    This appears to be the ratio of the values from the first derivative of the
+    CGF, when s = 0 and mu is variable.
+    
     Args:
         lambdas: vector of per base and allele mutation rates
         weights: per base and allele weights, indicating the likely severity of
