@@ -1,4 +1,7 @@
 
+from math import isnan
+from decimal import Decimal as dec
+
 from numpy import exp
 
 def cgf_0(mu, s, lambdas, weights):
@@ -23,7 +26,15 @@ def cgf_0(mu, s, lambdas, weights):
     
     values = lambdas * (exp(weights * mu + s) - 1)
     
-    return sum(values)
+    total = sum(values)
+    if not isnan(total):
+        return total
+    
+    mu = dec(mu)
+    s = dec(s)
+    
+    value = sum(( dec(m) * (exp(dec(w) * mu + s) - dec(1)) for m, w in zip(lambdas, weights) ))
+    return float(value)
 
 def cgf_2(mu, s, lambdas, weights):
     ''' cumulant generating function, second derivative
@@ -63,4 +74,23 @@ def cgf_2(mu, s, lambdas, weights):
     mumu = weights**2 * standard
     mus = weights * standard
     
-    return sum(ss) * sum(mumu) - (sum(mus)**2)
+    if any(( isnan(x) for x in standard )):
+        mu = dec(mu)
+        s = dec(s)
+        
+        ss = dec(0)
+        mumu = dec(0)
+        mus = dec(0)
+        for m, w in zip(lambdas, weights):
+            m = dec(m)
+            w = dec(w)
+            
+            x = m * exp(w - mu + s)
+            ss += x
+            mumu += w**2 * x
+            mus += w * x
+        
+        total = ss * mumu - mus**2
+        return float(total)
+    else:
+        return sum(ss) * sum(mumu) - (sum(mus)**2)
