@@ -1,7 +1,8 @@
 
 from __future__ import division
 
-from math import isnan
+from math import isnan, isinf
+from decimal import Decimal as dec
 
 from numpy import sign, exp, log
 
@@ -81,5 +82,10 @@ def solve_s_u(x, y, lambdas, weights, delta=10, refine=5, start=0):
     
     mu = (val['current'] + val['updated']) / 2
     s = log(x) - log(sum(lambdas * exp(weights * mu)))
+    
+    if isinf(s):
+        mu = dec(mu)
+        total = sum(( dec(a) * (dec(b) * mu).exp() for a, b in zip(lambdas, weights) ))
+        s, mu = log(x) - float(total.ln()), float(mu)
     
     return {'s': s, 'mu': mu}
