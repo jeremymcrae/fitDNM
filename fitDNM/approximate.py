@@ -1,5 +1,5 @@
 
-from numpy import log, exp, sqrt
+from numpy import log, exp, sqrt, sign
 from scipy.stats import norm
 
 from fitDNM.solver import solve_s_u
