@@ -6,7 +6,17 @@ from fitDNM.solver import solve_s_u
 from fitDNM.cumulant_generating_functions import cgf_0, cgf_2
 
 def get_w(s, s0, x, y, mu, lambdas, weights):
-    ''' w part function
+    ''' estimate w for Skovgaard’s approximation
+    
+    This estimates the joint CGF of (Y,Z) as:
+    
+        \eqn{\hat{w} = sgn(\hat{t})\sqrt{2[[K(\hat{s}_{0},0) - \hat{s}_{0}z] -
+            [K(\hat{s},\hat{t}) - \hat{s}z - \hat{t}y]]}}
+    
+    where:
+        K() is the cumulant generation function
+        \hat{t} is the estimated mu
+        z is the
     
     Args:
         s: something
@@ -65,15 +75,15 @@ def saddlepoint_p(values, s0, lambdas, weights):
         p-value
     '''
     
-    w = values['mu'] / abs(values['mu']) * sqrt(values['w_part'])
+    w = sign(values['mu']) * sqrt(values['w_part'])
     
     # compute K_ss(s0, 0) and |K_2_(s, mu)|
     K_ss = exp(s0) * sum(lambdas)
     K_2 = abs(cgf_2(values['mu'], values['s'], lambdas, weights))
     
-    p_value = 1 - norm.cdf(w) + norm.pdf(w) * (sqrt(K_ss / (K_2)) / values['mu'] - 1 / w)
+    u = values['mu'] * sqrt(K_2 / K_ss)
     
-    return p_value
+    return norm.sf(w) + norm.pdf(w) * (1 / u - 1 / w)
 
 def approximate(x, y, lambdas, weights):
     ''' conditional approximation
