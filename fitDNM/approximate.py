@@ -69,7 +69,7 @@ def saddlepoint_p(values, s0, lambdas, weights):
     
     # compute K_ss(s0, 0) and |K_2_(s, mu)|
     K_ss = exp(s0) * sum(lambdas)
-    K_2 = cgf_2(values['mu'], values['s'], lambdas, weights)
+    K_2 = abs(cgf_2(values['mu'], values['s'], lambdas, weights))
     
     p_value = 1 - norm.cdf(w) + norm.pdf(w) * (sqrt(K_ss / (K_2)) / values['mu'] - 1 / w)
     
