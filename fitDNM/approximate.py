@@ -6,7 +6,7 @@ from fitDNM.solver import solve_s_u
 from fitDNM.cumulant_generating_functions import cgf_0, cgf_2
 
 def get_w(s, s0, x, y, mu, lambdas, weights):
-    ''' estimate w for Skovgaard’s approximation
+    ''' estimate w for Skovgaard's approximation
     
     This estimates the joint CGF of (Y,Z) as:
     
