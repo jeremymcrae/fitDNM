@@ -19,7 +19,7 @@ env:
     - CC=gcc-4.9 CXX=g++-4.9
 before_install:
  - pip install --upgrade pip setuptools wheel
- - pip install --only-binary=all numpy scipy cython pandas
+ - pip install --only-binary=all numpy scipy cython pandas pysam
  - pip install git+git://github.com/jeremymcrae/denovonear.git
 install:
   - python setup.py install
