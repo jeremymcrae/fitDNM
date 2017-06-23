@@ -1,7 +1,6 @@
 # unit testing for the fitDNM functions
 
 import unittest
-import random
 import sys
 
 try:
@@ -12,16 +11,41 @@ except ImportError:
 IS_PYTHON3 = sys.version_info.major == 3
 
 import pandas
-from numpy.random import beta, uniform, normal, seed
+from numpy.random import beta, uniform, normal, seed, choice
 
-from fitDNM.gene_enrichment import compute_pvalue
+from fitDNM.gene_enrichment import enrichment
 
 class TestDoubleSaddlePointPy(unittest.TestCase):
     "check the primary gene enrichment function"
     
     def setUp(self):
         seed(1)
-        random.seed(1)
+    
+    def get_gene_data(self, length):
+        ''' define the severity and mutation rate data for a gene
+        '''
+        symbol = 'GENE1'
+        bases = ['A', 'C', 'G', 'T']
+        consequences = ['missense', 'nonsense', 'splice_lof', 'synonymous']
+        
+        # make lists of data for the mutation rates and severity pandas tables
+        symbols = [symbol] * length * 4
+        chrom = ['1'] * length * 4
+        pos = list(range(1, length + 1)) * 4
+        ref = [ choice(bases) for x in range(length) ] * 4
+        alts = [ y for x in bases for y in [x] * length ]
+        cq = [ choice(consequences, p=(0.7, 0.05, 0.01, 0.24)) for x in range(length * 4) ]
+        constrained = [ choice([True, False]) for x in range(length * 4) ]
+        
+        severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'score': uniform(low=0, high=30, size=length * 4)})
+        
+        mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
+            'ref': ref, 'alt': alts, 'consequence': cq,
+            'prob': 10**(normal(size=length * 4, loc=-8, scale=0.5)),
+            'constrained': constrained})
+        
+        return symbol, severity, mu_rate
     
     def get_de_novo_table(self):
         ''' make a file handle-like containing de novos for analysis.
@@ -34,21 +58,21 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         table = ['gene  chrom  pos  alt',
                 'GENE1   1    1    G',
-                'GENE1   1    2    T',
-                'GENEX   X    2    T']
+                'GENE1   1    2    A',
+                'GENEX   X    2    A']
         
         # define the ref alleles depending on the python version.
-        ref = ['ref', 'A', 'T', 'A']
+        ref = ['ref', 'A', 'T', 'T']
         if IS_PYTHON3:
-            ref = ['ref', 'C', 'A', 'A']
+            ref = ['ref', 'C', 'T', 'T']
         
         # add the ref alleles to the respective strings
         table = [ '{}  {}'.format(x, ref[i])  for i, x in enumerate(table) ]
         
         return StringIO('\n'.join(table))
     
-    def test_compute_pvalue(self):
-        ''' compute_pvalue output is correct
+    def test_enrichment(self):
+        ''' enrichment output is correct
         '''
         
         tab = self.get_de_novo_table()
@@ -57,30 +81,18 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         n_female = 100
         de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
         
-        symbol = 'GENE1'
-        bases = ['A', 'C', 'G', 'T']
-        symbols = [symbol] * 400
-        chrom = ['1'] * 400
-        pos = list(range(1, 101)) * 4
-        ref = [ random.choice(bases) for x in range(100) ] * 4
-        alts = [ y for x in bases for y in [x] * 100 ]
+        symbol, severity, rates = self.get_gene_data(length=100)
         
-        severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
-            'ref': ref, 'alt': alts, 'score': uniform(size=400)})
+        values = enrichment(de_novos, n_male, n_female, symbol, severity, rates)
         
-        mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
-            'ref': ref, 'alt': alts, 'prob': 10**(normal(size=400, loc=-8, scale=0.5))})
-        
-        values = compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate)
-        
-        expected = {'symbol': 'GENE1', 'nsnv_o': 203.55406926527692,
-            'n_sites': 100, 'n_de_novos': 2, 'scores': 1.825,
-            'p_value': 1.9947054872397942e-07, 'p_unweighted': 5.3598844780382316e-06}
+        expected = {'symbol': 'GENE1', 'gene_scores': 2392.9339756064869,
+            'sites': 100, 'de_novos': 2, 'de_novos_score': 12.673,
+            'p_value': 0.00052378628991146402, 'p_unweighted': 4.7845027404393762e-06}
         
         self.assertEqual(values, expected)
     
-    def test_compute_pvalue_zero_de_novos(self):
-        ''' compute_pvalue output is correct when the do novos are not in the
+    def test_enrichment_zero_de_novos(self):
+        ''' enrichment output is correct when the do novos are not in the
         sites covered by the rates or severity
         '''
         
@@ -90,30 +102,22 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         n_female = 100
         de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
         
-        symbol = 'GENE1'
-        bases = ['A', 'C', 'G', 'T']
-        symbols = [symbol] * 400
-        chrom = ['1'] * 400
-        pos = list(range(101, 201)) * 4
-        ref = [ random.choice(bases) for x in range(100) ] * 4
-        alts = [ y for x in bases for y in [x] * 100 ]
+        symbol, severity, rates = self.get_gene_data(length=100)
         
-        severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
-            'ref': ref, 'alt': alts, 'score': uniform(size=400)})
+        # shift the gene positions, so that the de novos can't match the sites
+        severity['pos'] += 100
+        rates['pos'] += 100
         
-        mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
-            'ref': ref, 'alt': alts, 'prob': 10**(normal(size=400, loc=-8, scale=0.5))})
+        values = enrichment(de_novos, n_male, n_female, symbol, severity, rates)
         
-        values = compute_pvalue(de_novos, n_male, n_female, symbol, severity, mu_rate)
-        
-        expected = {'symbol': 'GENE1', 'nsnv_o': 203.55406926527692,
-            'n_sites': 100, 'n_de_novos': 0, 'scores': 0,
+        expected = {'symbol': 'GENE1', 'gene_scores': 2392.9339756064869,
+            'sites': 100, 'de_novos': 0, 'de_novos_score': 0,
             'p_value': 1.0, 'p_unweighted': 1.0}
         
         self.assertEqual(values, expected)
     
-    def test_compute_pvalue_no_rates(self):
-        ''' compute_pvalue output is correct when we lack rate or severity data
+    def test_enrichment_no_rates(self):
+        ''' enrichment output is correct when we lack rate or severity data
         '''
         
         n_male = 100
@@ -128,5 +132,5 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
             'alt', 'prob'])
         
         with self.assertRaises(ValueError):
-            compute_pvalue(de_novos, n_male, n_female, symbol, severity, rates)
+            enrichment(de_novos, n_male, n_female, symbol, severity, rates)
         
