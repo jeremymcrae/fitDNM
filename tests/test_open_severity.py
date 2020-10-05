@@ -35,7 +35,7 @@ class TestOpenSeverityPy(CompareTables):
                          OR5A1  11   59210643   T    A   9.847
                          OR5A1  11   59210643   T    C   0.474''')
         
-        data = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        data = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         data = data.reset_index(drop=True)
         data['chrom'] = data['chrom'].astype(str)
         

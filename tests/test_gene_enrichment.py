@@ -69,7 +69,7 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         n_male = 100
         n_female = 100
-        de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        de_novos = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         
         symbol, severity, rates = self.get_gene_data(length=100)
         
@@ -90,7 +90,7 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         n_male = 100
         n_female = 100
-        de_novos = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        de_novos = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         
         symbol, severity, rates = self.get_gene_data(length=100)
         
@@ -112,8 +112,8 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         n_male = 100
         n_female = 100
-        de_novos = pandas.read_table(self.get_de_novo_table(),
-            delim_whitespace=True, skipinitialspace=True)
+        de_novos = pandas.read_table(self.get_de_novo_table(), sep='\s+',
+            skipinitialspace=True)
         
         symbol = 'GENE1'
         severity = pandas.DataFrame(columns=['gene', 'chrom', 'pos', 'ref',
