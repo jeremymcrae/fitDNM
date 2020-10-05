@@ -1,8 +1,7 @@
 language: python
 python:
-  - 2.7
-  - 3.4
   - 3.6
+  - 3.8
 cache:
   directories:
     - $HOME/.cache/pip
@@ -19,8 +18,7 @@ env:
     - CC=gcc-4.9 CXX=g++-4.9
 before_install:
  - pip install --upgrade pip setuptools wheel
- - pip install --only-binary=all numpy scipy cython pandas pysam
- - pip install git+git://github.com/jeremymcrae/denovonear.git
+ - pip install --only-binary=all numpy scipy cython pandas pysam denovonear
 install:
   - python setup.py install
   - pip install coveralls
