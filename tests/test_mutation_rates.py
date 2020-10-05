@@ -50,7 +50,7 @@ class TestMutationRatesPy(CompareTables):
                          OR5A1  11   59210644   G   T   2.657241e-09  missense     True
                          OR5A1  11   59210645   T   A   1.816291e-09  missense     False''')
         
-        data = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        data = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         data = data.reset_index(drop=True)
         data['chrom'] = data['chrom'].astype(str)
         
@@ -69,7 +69,7 @@ class TestMutationRatesPy(CompareTables):
                          OR5A1  11   59210644   G   T   2.657241e-09  missense     False
                          OR5A1  11   59210645   T   A   1.816291e-09  missense     False''')
         
-        data = pandas.read_table(tab, delim_whitespace=True, skipinitialspace=True)
+        data = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         data = data.reset_index(drop=True)
         data['chrom'] = data['chrom'].astype(str)
         
