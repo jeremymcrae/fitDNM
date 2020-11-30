@@ -22,8 +22,6 @@ import sys
 
 import numpy
 
-IS_PYTHON3 = sys.version_info.major == 3
-
 class CompareTables(unittest.TestCase):
     def compare_tables(self, first, second):
         """ check if two Dataframes contain the same information.
@@ -46,12 +44,6 @@ class CompareTables(unittest.TestCase):
             for idx in first.index:
                 first_val = first[column][idx]
                 second_val = second[column][idx]
-                
-                if not IS_PYTHON3:
-                    if type(first_val) == unicode:
-                        first_val = first_val.encode('utf8')
-                    if type(second_val) == unicode:
-                        second_val = second_val.encode('utf8')
                 
                 # prepare a suitable diagnostic error message if the values are
                 #  not equal
