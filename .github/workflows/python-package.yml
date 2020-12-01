@@ -32,6 +32,7 @@ jobs:
         python -m unittest discover
     - name: Coveralls
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
         python -m coverage run --source=./fitDNM -m unittest discover
