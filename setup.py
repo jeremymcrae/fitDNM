@@ -39,5 +39,8 @@ setup(
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
     ],
-    test_suite="tests"
+    test_suite="tests",
+    tests_require=[
+        'coverage',
+    ]
 )
