@@ -30,6 +30,7 @@ jobs:
     - name: Run tests
       run: |
         python -m unittest discover
+        pip install coverage
         python -m coverage run --source=./fitDNM -m unittest discover
     - name: Coveralls
       uses: coverallsapp/github-action@master
