@@ -9,7 +9,9 @@ In addition to the python conversion, this code changes some inputs:
 
 #### Installation
 ``` sh
-python setup.py install --user
+git clone https://github.com/jeremymcrae/fitDNM.git
+cd fitDNM
+pip install .
 ```
 
 #### Example files
