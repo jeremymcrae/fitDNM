@@ -24,7 +24,8 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         y = 1
         lambdas = normal(size=1000, loc=1e-4, scale=1e-5)
         weights = beta(size=1000, a=0.5, b=0.5)
-        self.assertEqual(saddlepoint(y, lambdas, weights), 0.0022951333364715112)
+        self.assertAlmostEqual(saddlepoint(
+            y, lambdas, weights), 0.0022951333364715112, delta=1e-12)
     
     def test_saddlepoint_zero_values(self):
         '''saddlepoint output is correct when the start value equals 0
