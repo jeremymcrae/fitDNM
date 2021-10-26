@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, 3.9, 3.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -35,4 +35,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         python -m coverage run --source=./fitDNM -m unittest discover
-        coveralls
+        coveralls --service=github
