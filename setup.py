@@ -32,7 +32,7 @@ setup(
     install_requires=['pandas >= 0.15.0',
                       'scipy >= 0.15.0',
                       'numpy >= 1.9.0',
-                      'denovonear >= 0.9.4',
+                      'denovonear >= 0.9.0',
                       'pysam >= 0.9.0'
     ],
     classifiers=[
