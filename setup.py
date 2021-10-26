@@ -35,6 +35,7 @@ setup(
                       'denovonear >= 0.9.0',
                       'pysam >= 0.9.0'
     ],
+    entry_points={'console_scripts': ['fitdnm = fitDNM.__main__:main']},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",

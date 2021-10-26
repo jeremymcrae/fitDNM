@@ -18,7 +18,7 @@ python setup.py install --user
 
 #### Running
 ``` sh
-python scripts/run_fitDNM.py \
+fitdnm \
   --males 156 \
   --females 108 \
   --de-novos examples/de_novos.txt \
