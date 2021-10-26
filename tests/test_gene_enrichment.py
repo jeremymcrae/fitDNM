@@ -74,12 +74,14 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         symbol, severity, rates = self.get_gene_data(length=100)
         
         values = enrichment(de_novos, n_male, n_female, symbol, severity, rates)
+        p_value = values['p_value']
+        del values['p_value']
         
         expected = {'symbol': 'GENE1', 'gene_scores': 2392.9339756064869,
             'sites': 100, 'de_novos': 2, 'de_novos_score': 12.673,
-            'p_value': 0.00052378628991146402, 'p_unweighted': 4.7845027404393762e-06}
-        
+            'p_unweighted': 4.7845027404393762e-06}
         self.assertEqual(values, expected)
+        self.assertAlmostEqual(p_value, 0.0005237862899114633, delta=1e-14)
     
     def test_enrichment_zero_de_novos(self):
         ''' enrichment output is correct when the do novos are not in the
