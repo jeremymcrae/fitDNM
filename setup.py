@@ -23,7 +23,7 @@ from setuptools import setup
 
 setup(
     name = "fitDNM",
-    version = "0.1.1",
+    version = "0.2.0",
     author = "Yu Jiang",
     author_email = "yu.jiang@duke.edu",
     description = ("Enrichment of de novo mutations within genes."),
