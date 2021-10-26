@@ -6,7 +6,7 @@ import pandas
 from fitDNM.regional_constraint import load_regional_constraint, get_constrained_positions
 
 from denovonear.load_gene import load_gene, \
-    get_de_novos_in_transcript, construct_gene_object
+    construct_gene_object, minimise_transcripts
 from denovonear.load_mutation_rates import load_mutation_rates
 from denovonear.site_specific_rates import SiteRates
 from denovonear.rate_limiter import RateLimiter
@@ -50,8 +50,10 @@ async def _async_get_gene_rates(symbol, de_novos, constraint=None, mut_path=None
     
     async with RateLimiter(per_second=15) as ensembl:
         positions = de_novos['pos'][de_novos['gene'] == symbol]
-        transcripts = await load_gene(ensembl, symbol, positions)
-        chrom = transcripts[0].get_chrom()
+        gene = await load_gene(ensembl, symbol)
+        chrom = gene.chrom
+        minimized = minimise_transcripts(gene.transcripts, positions)
+        transcripts = [x for x in gene.transcripts if x.get_name() in minimized]
         
         if symbol not in set(constraint['gene']):
             sites = set([])
