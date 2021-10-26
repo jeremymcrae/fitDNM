@@ -37,4 +37,4 @@ class TestConditionalApproximationPy(unittest.TestCase):
         y = 1
         lambdas = normal(loc=1e-4, scale=1e-5, size=1000)
         weights = uniform(size=1000)
-        self.assertAlmostEqual(approximate(x, y, lambdas, weights), 0.4979291242903694, places=12)
+        self.assertAlmostEqual(approximate(x, y, lambdas, weights), 0.4979291242903694, places=11)

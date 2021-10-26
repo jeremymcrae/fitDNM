@@ -23,7 +23,7 @@ class TestSolverPy(unittest.TestCase):
         values = solve_s_u(x, y, lambdas, weights)
         
         self.assertAlmostEqual(values['mu'], 14195, delta=1e-14)
-        self.assertAlmostEqual(values['s'], -693.12107872527565178, delta=1e-14)
+        self.assertAlmostEqual(values['s'], -693.12107872527565178, delta=1e-13)
         
         # check that the results are correct with different inputs.
         x = 2
@@ -33,7 +33,7 @@ class TestSolverPy(unittest.TestCase):
         values = solve_s_u(x, y, lambdas, weights)
         
         self.assertAlmostEqual(values['mu'], 7095, delta=1e-14)
-        self.assertAlmostEqual(values['s'], -692.68875716848174307, delta=1e-14)
+        self.assertAlmostEqual(values['s'], -692.68875716848174307, delta=1e-13)
     
     def test_solve_s_u_with_delta(self):
         '''solve_s_u output is correct when we define a delta
@@ -46,7 +46,7 @@ class TestSolverPy(unittest.TestCase):
         values = solve_s_u(x, y, lambdas, weights, delta=200)
         
         self.assertAlmostEqual(values['mu'], 14100, delta=1e-14)
-        self.assertAlmostEqual(values['s'], -688.37107872527565178, delta=1e-14)
+        self.assertAlmostEqual(values['s'], -688.37107872527565178, delta=1e-13)
     
     def test_solve_s_u_with_refining(self):
         '''solve_s_u output is correct when we need to refine
@@ -59,5 +59,5 @@ class TestSolverPy(unittest.TestCase):
         start = 10
         values = solve_s_u(x, y, lambdas, weights, start=start)
         
-        self.assertAlmostEqual(values['mu'], 69.31475000000003206, delta=1e-14)
-        self.assertAlmostEqual(values['s'], -56.192386303155750227, delta=1e-14)
+        self.assertAlmostEqual(values['mu'], 69.31475000000003206, delta=1e-13)
+        self.assertAlmostEqual(values['s'], -56.192386303155750227, delta=1e-13)
