@@ -5,6 +5,7 @@ import sys
 
 import pandas
 
+from denovonear.__main__ import load_gencode
 from fitDNM.gene_enrichment import enrichment
 from fitDNM.mutation_rates import get_gene_rates
 from fitDNM.open_severity import get_cadd_severity
@@ -18,6 +19,8 @@ def get_options():
     parser.add_argument('--females', type=int, help='number of females.')
     parser.add_argument('--de-novos', help='Path to table of de novos.')
     parser.add_argument('--severity', help='Path to table of per base and allele CADD severity scores.')
+    parser.add_argument('--gencode', help='Path to gencode annotations file.')
+    parser.add_argument('--fasta', help='Path to genome fasta file.')
     parser.add_argument('--rates', help='Path to table of sequence context '
         'based rates. Defaults to Kaitlin Samocha\'s trinucleotide-based rates.')
     parser.add_argument('--constraint', help='Path to table of regional constraint.')
@@ -39,12 +42,16 @@ def main():
     de_novos = pandas.read_table(args.de_novos)
     de_novos['chrom'] = de_novos['chrom'].astype(str)
     
+    gencode = None
+    if args.gencode and args.fasta:
+        gencode = load_gencode([], args.gencode, args.fasta)
+    
     computed = []
     for symbol in sorted(set(de_novos['gene'])):
         print(symbol)
         
         try:
-            mu_rate = get_gene_rates(symbol, de_novos, args.constraint, mut_path=args.rates)
+            mu_rate = get_gene_rates(symbol, de_novos, gencode, args.constraint, mut_path=args.rates)
         except IndexError:
             continue
         

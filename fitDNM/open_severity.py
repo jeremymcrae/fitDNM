@@ -23,8 +23,15 @@ def get_cadd_severity(symbol, chrom, start, end,
     
     tabix = pysam.TabixFile(cadd_path)
     
+    prefixed = chrom.startswith('chr')
+    tabix_prefixed = tabix.contigs[0].startswith('chr')
+    if prefixed and not tabix_prefixed:
+        chrom = chrom[3:]
+    
     def parse(line):
         chrom, pos, ref, alt, raw, scaled = line.split('\t')
+        if prefixed:
+            chrom = f'chr{chrom}'
         return {'chrom': chrom, 'pos': int(pos), 'ref': ref, 'alt': alt,
             'raw': float(raw), 'score': float(scaled)}
     

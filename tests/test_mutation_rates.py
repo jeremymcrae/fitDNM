@@ -37,7 +37,7 @@ class TestMutationRatesPy(CompareTables):
         symbol = 'OR5A1'
         de_novos = pandas.DataFrame({'pos': [59211188], 'gene': [symbol]})
         
-        mu_rates = get_gene_rates(symbol, de_novos, constraint.name)
+        mu_rates = get_gene_rates(symbol, de_novos, None, constraint.name)
         tab = StringIO('''gene chrom pos      ref alt           prob  consequence  constrained
                          OR5A1  11   59210642   A   C   1.931850e-09  missense     True
                          OR5A1  11   59210642   A   G   1.199826e-08  missense     True

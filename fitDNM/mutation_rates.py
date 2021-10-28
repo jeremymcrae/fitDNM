@@ -11,7 +11,7 @@ from denovonear.load_mutation_rates import load_mutation_rates
 from denovonear.site_specific_rates import SiteRates
 from denovonear.rate_limiter import RateLimiter
 
-def get_gene_rates(symbol, de_novos, constraint=None, mut_path=None):
+def get_gene_rates(symbol, de_novos, gencode=None, constraint=None, mut_path=None):
     ''' get per nucleotide mutation rates for all SNV alt alleles in a gene
 
     Args:
@@ -25,10 +25,10 @@ def get_gene_rates(symbol, de_novos, constraint=None, mut_path=None):
     '''
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(_async_get_gene_rates(
-        symbol, de_novos, constraint, mut_path))
+        symbol, de_novos, gencode, constraint, mut_path))
     return result
 
-async def _async_get_gene_rates(symbol, de_novos, constraint=None, mut_path=None):
+async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None, mut_path=None):
     ''' get per nucleotide mutation rates for all SNV alt alleles in a gene
     
     Args:
@@ -48,20 +48,28 @@ async def _async_get_gene_rates(symbol, de_novos, constraint=None, mut_path=None
     else:
         constraint = {'gene': set([])}
     
-    async with RateLimiter(per_second=15) as ensembl:
-        positions = de_novos['pos'][de_novos['gene'] == symbol]
-        gene = await load_gene(ensembl, symbol)
-        chrom = gene.chrom
-        minimized = minimise_transcripts(gene.transcripts, positions)
-        transcripts = [x for x in gene.transcripts if x.get_name() in minimized]
-        
-        if symbol not in set(constraint['gene']):
-            sites = set([])
-        else:
-            regional = constraint[constraint['gene'] == symbol]
-            tx_id = list(regional['transcript'])[0]
-            tx = await construct_gene_object(ensembl, tx_id.split('.')[0])
-            sites = get_constrained_positions(tx, regional, threshold=1e-3, ratio_threshold=0.4)
+    positions = de_novos['pos'][de_novos['gene'] == symbol]
+    if gencode:
+        gene = gencode[symbol]
+    else:
+        async with RateLimiter(per_second=15) as ensembl:
+            gene = await load_gene(ensembl, symbol)
+    
+    if len(gene.transcripts) == 0:
+        raise IndexError
+    
+    minimized = minimise_transcripts(gene.transcripts, positions)
+    transcripts = [x for x in gene.transcripts if x.get_name() in minimized]
+    
+    if len(transcripts) == 0:
+        raise IndexError
+    
+    if symbol not in set(constraint['gene']):
+        sites = set([])
+    else:
+        regional = constraint[constraint['gene'] == symbol]
+        tx = transcripts[0]
+        sites = get_constrained_positions(tx, regional, threshold=1e-3, ratio_threshold=0.4)
     
     mu_rate = []
     for transcript in transcripts:
@@ -71,7 +79,7 @@ async def _async_get_gene_rates(symbol, de_novos, constraint=None, mut_path=None
                 choice['pos'] = transcript.get_position_on_chrom(choice['pos'], choice['offset'])
                 choice['consequence'] = cq
                 choice['gene'] = symbol
-                choice['chrom'] = chrom
+                choice['chrom'] = gene.chrom
                 
                 choice['constrained'] = False
                 if choice['pos'] in sites:
