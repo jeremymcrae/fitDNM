@@ -71,9 +71,10 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
         tx = transcripts[0]
         sites = get_constrained_positions(tx, regional, threshold=1e-3, ratio_threshold=0.4)
     
+    merged = None
     mu_rate = []
     for transcript in transcripts:
-        rates = SiteRates(transcript, mut_dict)
+        rates = SiteRates(transcript, mut_dict, merged)
         for cq in ['nonsense', 'missense', 'synonymous', 'splice_lof', 'splice_region']:
             for choice in rates[cq]:
                 choice['pos'] = transcript.get_position_on_chrom(choice['pos'], choice['offset'])
@@ -86,6 +87,9 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
                     choice['constrained'] = True
                 
                 mu_rate.append(choice)
+        if merged is None:
+            merged = transcript
+        merged += transcript
     
     data = pandas.DataFrame(mu_rate)
     data = data.sort_values(['chrom', 'pos', 'alt'])
