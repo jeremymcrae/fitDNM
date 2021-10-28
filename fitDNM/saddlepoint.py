@@ -38,7 +38,7 @@ def saddlepoint(y, lambdas, weights):
         if updated is None:
             return None
         
-        if abs(updated / current) < 1e-5:
+        if current != 0 and abs(updated / current) < 1e-5:
             return current + updated
         
         current += updated
