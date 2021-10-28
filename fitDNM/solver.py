@@ -21,8 +21,13 @@ def cgf_ratio(lambdas, weights, mu):
     Returns:
         float value for
     '''
-    return (sum(lambdas * weights * exp(weights * mu)) /
-        sum(lambdas * exp(weights * mu)))
+    numerator = sum(lambdas * weights * exp(weights * mu))
+    denominator = sum(lambdas * exp(weights * mu))
+    
+    if numerator == 0:
+        return 0
+    
+    return numerator / denominator
 
 def solver(current, initial_sign, ratio, lambdas, weights, delta):
     ''' solve for initial and updated
