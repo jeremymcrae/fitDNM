@@ -50,6 +50,8 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
     
     positions = de_novos['pos'][de_novos['gene'] == symbol]
     if gencode:
+        if symbol not in gencode:
+            raise IndexError
         gene = gencode[symbol]
     else:
         async with RateLimiter(per_second=15) as ensembl:
