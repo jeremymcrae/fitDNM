@@ -1,6 +1,7 @@
 
 import os
 import argparse
+import logging
 import sys
 
 import pandas
@@ -38,6 +39,7 @@ def get_options():
 
 def main():
     args = get_options()
+    logging.basicConfig(stream=sys.stdout, format='%(asctime)-15s %(message)s', level=logging.INFO)
     
     de_novos = pandas.read_table(args.de_novos)
     de_novos['chrom'] = de_novos['chrom'].astype(str)

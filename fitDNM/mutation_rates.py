@@ -1,5 +1,6 @@
 
 import asyncio
+import logging
 
 import pandas
 
@@ -51,6 +52,7 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
     positions = de_novos['pos'][de_novos['gene'] == symbol]
     if gencode:
         if symbol not in gencode:
+            logging.info(f'cannot find {symbol} in gencode genes')
             raise IndexError
         gene = gencode[symbol]
     else:
@@ -58,12 +60,14 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
             gene = await load_gene(ensembl, symbol)
     
     if len(gene.transcripts) == 0:
+        logging.info(f'cannot find transcripts for {symbol}')
         raise IndexError
     
     minimized = minimise_transcripts(gene.transcripts, positions)
     transcripts = [x for x in gene.transcripts if x.get_name() in minimized]
     
     if len(transcripts) == 0:
+        logging.info(f'DNMs for {symbol} not in any suitable transcript')
         raise IndexError
     
     if symbol not in set(constraint['gene']):
