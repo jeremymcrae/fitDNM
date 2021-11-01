@@ -23,7 +23,7 @@ from setuptools import setup
 
 setup(
     name = "fitDNM",
-    version = "0.2.0",
+    version = "0.2.1",
     author = "Yu Jiang",
     author_email = "yu.jiang@duke.edu",
     description = ("Enrichment of de novo mutations within genes."),
@@ -32,7 +32,7 @@ setup(
     install_requires=['pandas >= 0.15.0',
                       'scipy >= 0.15.0',
                       'numpy >= 1.9.0',
-                      'denovonear >= 0.9.0',
+                      'denovonear >= 0.9.9',
                       'pysam >= 0.9.0'
     ],
     entry_points={'console_scripts': ['fitdnm = fitDNM.__main__:main']},

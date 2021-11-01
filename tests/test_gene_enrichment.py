@@ -35,15 +35,13 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         ref = [ choice(bases) for x in range(length) ] * 4
         alts = [ y for x in bases for y in [x] * length ]
         cq = [ choice(consequences, p=(0.7, 0.05, 0.01, 0.24)) for x in range(length * 4) ]
-        constrained = [ choice([True, False]) for x in range(length * 4) ]
         
         severity = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
             'ref': ref, 'alt': alts, 'score': uniform(low=0, high=30, size=length * 4)})
         
         mu_rate = pandas.DataFrame({'gene': symbols, 'chrom': chrom, 'pos': pos,
             'ref': ref, 'alt': alts, 'consequence': cq,
-            'prob': 10**(normal(size=length * 4, loc=-8, scale=0.5)),
-            'constrained': constrained})
+            'prob': 10**(normal(size=length * 4, loc=-8, scale=0.5))})
         
         return symbol, severity, mu_rate
     
@@ -77,11 +75,11 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         p_value = values['p_value']
         del values['p_value']
         
-        expected = {'symbol': 'GENE1', 'gene_scores': 2392.9339756064869,
-            'sites': 100, 'de_novos': 2, 'de_novos_score': 12.673,
-            'p_unweighted': 4.7845027404393762e-06}
+        expected = {'symbol': 'GENE1', 'gene_scores': 6013.427624486824,
+            'sites': 100, 'de_novos': 2, 'de_novos_score': 29.387,
+            'p_unweighted': 4.526029176220055e-06}
         self.assertEqual(values, expected)
-        self.assertAlmostEqual(p_value, 0.0005237862899114633, delta=1e-14)
+        self.assertAlmostEqual(p_value, 0.000044730946048192, delta=1e-14)
     
     def test_enrichment_zero_de_novos(self):
         ''' enrichment output is correct when the do novos are not in the
@@ -102,7 +100,7 @@ class TestDoubleSaddlePointPy(unittest.TestCase):
         
         values = enrichment(de_novos, n_male, n_female, symbol, severity, rates)
         
-        expected = {'symbol': 'GENE1', 'gene_scores': 2392.9339756064869,
+        expected = {'symbol': 'GENE1', 'gene_scores': 6013.427624486824,
             'sites': 100, 'de_novos': 0, 'de_novos_score': 0,
             'p_value': 1.0, 'p_unweighted': 1.0}
         

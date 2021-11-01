@@ -4,8 +4,6 @@ import logging
 
 import pandas
 
-from fitDNM.regional_constraint import load_regional_constraint, get_constrained_positions
-
 from denovonear.load_gene import load_gene, \
     construct_gene_object, minimise_transcripts
 from denovonear.load_mutation_rates import load_mutation_rates
@@ -44,11 +42,6 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
     
     mut_dict = load_mutation_rates(mut_path)
     
-    if constraint is not None:
-        constraint = load_regional_constraint(constraint)
-    else:
-        constraint = {'gene': set([])}
-    
     positions = de_novos['pos'][de_novos['gene'] == symbol]
     if gencode:
         if symbol not in gencode:
@@ -67,15 +60,8 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
     transcripts = [x for x in gene.transcripts if x.get_name() in minimized]
     
     if len(transcripts) == 0:
-        logging.info(f'DNMs for {symbol} not in any suitable transcript')
+        logging.error(f'DNMs for {symbol} not in any suitable transcript')
         raise IndexError
-    
-    if symbol not in set(constraint['gene']):
-        sites = set([])
-    else:
-        regional = constraint[constraint['gene'] == symbol]
-        tx = transcripts[0]
-        sites = get_constrained_positions(tx, regional, threshold=1e-3, ratio_threshold=0.4)
     
     merged = None
     mu_rate = []
@@ -87,10 +73,6 @@ async def _async_get_gene_rates(symbol, de_novos, gencode=None, constraint=None,
                 choice['consequence'] = cq
                 choice['gene'] = symbol
                 choice['chrom'] = gene.chrom
-                
-                choice['constrained'] = False
-                if choice['pos'] in sites:
-                    choice['constrained'] = True
                 
                 mu_rate.append(choice)
         if merged is None:

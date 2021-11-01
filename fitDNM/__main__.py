@@ -24,7 +24,6 @@ def get_options():
     parser.add_argument('--fasta', help='Path to genome fasta file.')
     parser.add_argument('--rates', help='Path to table of sequence context '
         'based rates. Defaults to Kaitlin Samocha\'s trinucleotide-based rates.')
-    parser.add_argument('--constraint', help='Path to table of regional constraint.')
     parser.add_argument('--output', help='Path to put output files into.',
         default=sys.stdout)
     
@@ -53,7 +52,7 @@ def main():
         print(symbol)
         
         try:
-            mu_rate = get_gene_rates(symbol, de_novos, gencode, args.constraint, mut_path=args.rates)
+            mu_rate = get_gene_rates(symbol, de_novos, gencode, mut_path=args.rates)
         except IndexError:
             continue
         

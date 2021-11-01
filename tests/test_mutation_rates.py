@@ -38,17 +38,17 @@ class TestMutationRatesPy(CompareTables):
         de_novos = pandas.DataFrame({'pos': [59211188], 'gene': [symbol]})
         
         mu_rates = get_gene_rates(symbol, de_novos, None, constraint.name)
-        tab = StringIO('''gene chrom pos      ref alt           prob  consequence  constrained
-                         OR5A1  11   59210642   A   C   1.931850e-09  missense     True
-                         OR5A1  11   59210642   A   G   1.199826e-08  missense     True
-                         OR5A1  11   59210642   A   T   2.196288e-09  missense     True
-                         OR5A1  11   59210643   T   A   2.130977e-09  missense     True
-                         OR5A1  11   59210643   T   C   1.203480e-08  missense     True
-                         OR5A1  11   59210643   T   G   1.920463e-09  missense     True
-                         OR5A1  11   59210644   G   A   9.635061e-09  missense     True
-                         OR5A1  11   59210644   G   C   2.477197e-09  missense     True
-                         OR5A1  11   59210644   G   T   2.657241e-09  missense     True
-                         OR5A1  11   59210645   T   A   1.816291e-09  missense     False''')
+        tab = StringIO('''gene chrom pos      ref alt           prob  consequence
+                         OR5A1  11   59210642   A   C   1.931850e-09  missense
+                         OR5A1  11   59210642   A   G   1.199826e-08  missense
+                         OR5A1  11   59210642   A   T   2.196288e-09  missense
+                         OR5A1  11   59210643   T   A   2.130977e-09  missense
+                         OR5A1  11   59210643   T   C   1.203480e-08  missense
+                         OR5A1  11   59210643   T   G   1.920463e-09  missense
+                         OR5A1  11   59210644   G   A   9.635061e-09  missense
+                         OR5A1  11   59210644   G   C   2.477197e-09  missense
+                         OR5A1  11   59210644   G   T   2.657241e-09  missense
+                         OR5A1  11   59210645   T   A   1.816291e-09  missense''')
         
         data = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         data = data.reset_index(drop=True)
@@ -57,17 +57,17 @@ class TestMutationRatesPy(CompareTables):
         self.compare_tables(mu_rates.head(10), data)
         
         mu_rates = get_gene_rates(symbol, de_novos)
-        tab = StringIO('''gene chrom pos      ref alt           prob  consequence  constrained
-                         OR5A1  11   59210642   A   C   1.931850e-09  missense     False
-                         OR5A1  11   59210642   A   G   1.199826e-08  missense     False
-                         OR5A1  11   59210642   A   T   2.196288e-09  missense     False
-                         OR5A1  11   59210643   T   A   2.130977e-09  missense     False
-                         OR5A1  11   59210643   T   C   1.203480e-08  missense     False
-                         OR5A1  11   59210643   T   G   1.920463e-09  missense     False
-                         OR5A1  11   59210644   G   A   9.635061e-09  missense     False
-                         OR5A1  11   59210644   G   C   2.477197e-09  missense     False
-                         OR5A1  11   59210644   G   T   2.657241e-09  missense     False
-                         OR5A1  11   59210645   T   A   1.816291e-09  missense     False''')
+        tab = StringIO('''gene chrom pos      ref alt           prob  consequence
+                         OR5A1  11   59210642   A   C   1.931850e-09  missense
+                         OR5A1  11   59210642   A   G   1.199826e-08  missense
+                         OR5A1  11   59210642   A   T   2.196288e-09  missense
+                         OR5A1  11   59210643   T   A   2.130977e-09  missense
+                         OR5A1  11   59210643   T   C   1.203480e-08  missense
+                         OR5A1  11   59210643   T   G   1.920463e-09  missense
+                         OR5A1  11   59210644   G   A   9.635061e-09  missense
+                         OR5A1  11   59210644   G   C   2.477197e-09  missense
+                         OR5A1  11   59210644   G   T   2.657241e-09  missense
+                         OR5A1  11   59210645   T   A   1.816291e-09  missense''')
         
         data = pandas.read_table(tab, sep='\s+', skipinitialspace=True)
         data = data.reset_index(drop=True)
